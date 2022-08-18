@@ -1,0 +1,5 @@
+{
+    "name": "Polygon Mainnet",
+    "rpc": "https://polygon-rpc.com",
+    "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+}

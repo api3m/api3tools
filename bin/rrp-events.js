@@ -122,5 +122,12 @@ formats = {
     }
 };
 
-const query = rrp.queryFilter(filters[args._[0]], args.fromBlock, args.toBlock);
-query.then(events => formats[args.output](events.map(maps[args._[0]])));
+rrp.queryFilter(filters[args._[0]], args.fromBlock, args.toBlock)
+    .then(events => formats[args.output](events.map(maps[args._[0]])))
+    .catch(error => {
+        if (typeof error.body === 'string') {
+            console.error(JSON.parse(error.body).error.message);
+        } else {
+            console.error(error.message);
+        }
+    });

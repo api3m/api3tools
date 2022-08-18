@@ -36,15 +36,41 @@ $ rrp-events sponsor --help   # Query SetSponsorshipStatus events
 Specify which chain/network with -n (--network). Each supported network has a config file in the networks folder that defaults to using a free RPC node. You can add/edit config files to configure your own RPC node or to add new networks.
 
 ```sh
-$ rrp-events -n polygon full
+$ rrp-events -n polygon full -f 31471066 -t 31481066
 ```
+
+An example network config file is shown here.
+
+```json
+{
+  "name": "Ethereum Mainnet",
+  "rpc": "https://nodes.mewapi.io/rpc/eth",
+  "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+}
+```
+
+The `rpc` field can either be a URL string or a [ConnectionInfo](https://docs.ethers.io/v5/api/utils/web/#ConnectionInfo) object as accepted by the ethers [JsonRpcProvider](https://docs.ethers.io/v5/api/providers/jsonrpc-provider/#JsonRpcProvider) constructor. For example:
+
+```json
+{
+  "name": "Ethereum Mainnet",
+  "rpc": {
+    "url": "https://mainnet.infura.io/v3/",
+    "user": "myusername",
+    "password": "MyPassword!!!"
+  },
+  "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+}
+```
+
+The `contract` field is the Airnode RRP contract address on that chain. See [here](https://docs.api3.org/airnode/v0.7/reference/airnode-addresses.html) for API3 deployed contracts.
 
 ### Block Range
 
 Limit the range of blocks searched with -f (--from-block) and -t (--to-block). By default the whole chain will be searched, from block 0 to the latest block.
 
 ```sh
-$ rrp-events -f 14698560 -t 14698562 full
+$ rrp-events full -f 14698560 -t 14698562
 ```
 
 ### Output Format
