@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Command line tools to interact with with Airnode on chain",
   "main": "index.js",
+  "bin": {
+    "rrp-events": "./bin/rrp-events.js"
+  },
   "scripts": {
     "test": "test"
   },
