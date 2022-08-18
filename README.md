@@ -39,6 +39,25 @@ Specify which chain/network with -n (--network). Each supported network has a co
 $ rrp-events -n polygon full -f 31471066 -t 31481066
 ```
 
+The `networks` command lists all available networks.
+
+```sh
+$ rrp-events networks
+arbitrum: Arbitrum One
+avalanche: Avalanche C-Chain
+bnb: BNB Chain Mainnet
+ethereum: Ethereum Mainnet
+fantom: Fantom Opera Mainnet
+gnosis: Gnosis Chain Mainnet
+metis: Metis Andromeda Mainnet
+milkomeda: Milkomeda C1 Mainnet
+moonbeam: Moonbeam (Polkadot) Mainnet
+moonriver: Moonriver (Kusama) Canary Net
+optimism: Optimism Mainnet
+polygon: Polygon Mainnet
+rsk: Rootstock (RSK) Mainnet
+```
+
 An example network config file is shown here.
 
 ```json
@@ -67,7 +86,7 @@ The `contract` field is the Airnode RRP contract address on that chain. See [her
 
 ### Block Range
 
-Limit the range of blocks searched with -f (--from-block) and -t (--to-block). By default the whole chain will be searched, from block 0 to the latest block.
+Limit the range of blocks searched with -f (--from-block) and -t (--to-block). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or the query will respond with an error.
 
 ```sh
 $ rrp-events full -f 14698560 -t 14698562

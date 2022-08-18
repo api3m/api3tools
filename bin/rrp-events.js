@@ -46,6 +46,7 @@ const args = yargs.usage("\nUsage: rrp-events <event type: full | template | ful
     .command("fulfilled", "Query FulfilledRequest events", airnodeRequestOptions)
     .command("failed", "Query FailedRequest events", airnodeRequestOptions)
     .command("sponsor", "Query SetSponsorshipStatus events", sponsorRequesterOptions)
+    .command("networks", "List all available networks")
     .demandCommand(1, "Need to specify an event type: full | template | fulfilled | failed | sponsor")
     .help(true).argv;
 
@@ -57,7 +58,29 @@ const abi = [
     "event FailedRequest(address indexed airnode, bytes32 indexed requestId, string errorMessage)"
 ];
 
-const network = JSON.parse(fs.readFileSync(`./networks/${args.network}.json`, 'utf8'));
+const command = args._[0];
+const networkPath = "./networks"
+
+if (command == "networks") {
+    const networks = fs.readdirSync(networkPath);
+    networks.forEach(filename => {
+        const parts = filename.split(".");
+        if (parts.length == 2 && parts[1] == "json") {
+            const network = JSON.parse(fs.readFileSync(`${networkPath}/${filename}`, 'utf8'));
+            console.log(parts[0] + ": " + network.name);
+        }
+    });
+    return;
+}
+
+let network = null;
+try {
+    network = JSON.parse(fs.readFileSync(`${networkPath}/${args.network}.json`, 'utf8'));
+} catch (error) {
+    console.error(error.message);
+    return;
+}
+
 const provider = new ethers.providers.JsonRpcProvider(network.rpc);
 const rrp = new ethers.Contract(network.contract, abi, provider);
 
@@ -122,8 +145,8 @@ formats = {
     }
 };
 
-rrp.queryFilter(filters[args._[0]], args.fromBlock, args.toBlock)
-    .then(events => formats[args.output](events.map(maps[args._[0]])))
+rrp.queryFilter(filters[command], args.fromBlock, args.toBlock)
+    .then(events => formats[args.output](events.map(maps[command])))
     .catch(error => {
         if (typeof error.body === 'string') {
             console.error(JSON.parse(error.body).error.message);
