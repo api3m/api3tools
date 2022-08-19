@@ -107,3 +107,25 @@ Specify the output file with -o (--output). By default events will be pretty-pri
 $ rrp-events full --output airnode-full-requests.json
 $ rrp-events full --output airnode-full-requests.csv
 ```
+
+### Examples
+
+Extract all full requests and responses on Ethereum into CSV files.
+
+```sh
+$ rrp-events full -o airnode-full-requests-eth.csv
+$ rrp-events fulfilled -o airnode-fulfilled-requests-eth.csv
+```
+
+Print full requests and responses on Polygon from block 30900000 to block 31000000 by querying evey 10000 blocks.
+
+```sh
+$ rrp-events -n polygon full -f 30900000 -t 31000000 -b 10000
+$ rrp-events -n polygon fulfilled -f 30900000 -t 31000000 -b 10000
+```
+
+Print sponsorship events on BNB Chain from block 19110000 by querying evey 5000 blocks.
+
+```sh
+$ rrp-events -n bnb sponsor -f 19110000 -b 5000
+```

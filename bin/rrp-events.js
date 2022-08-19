@@ -10,11 +10,14 @@ const path = require('path');
 
     const args = getArgs();
     const abi = getAbi();
-    const command = args._[0];
+    if (!args || !abi) {
+        return;
+    }
+
     const projectPath = path.dirname(__dirname);
     const networksPath = path.join(projectPath, "networks");
 
-    if (command == "networks") {
+    if (args.command == "networks") {
         listNetworks(networksPath);
         return;
     }
@@ -29,20 +32,21 @@ const path = require('path');
 
     const provider = new ethers.providers.JsonRpcProvider(network.rpc);
     const contract = new ethers.Contract(network.contract, abi, provider);
-    const filters = getFilters(args, contract);
+    const filter = getFilters(args, contract)[args.command];
     const maps = getMaps();
 
     await prepareForBlockRangeLoop(args, provider);
 
+    console.log(`Searching blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
     let appendFile = false;
     for (let f = args.from; f <= args.to; f += args.by) {
         let t = Math.min(f + args.by - 1, args.to);
-        process.stdout.write(`Searching blocks ${f} to ${t}: `);
+        process.stdout.write(`Querying blocks ${f} to ${t}: `);
         try {
-            const events = await contract.queryFilter(filters[command], f, t);
+            const events = await contract.queryFilter(filter, f, t);
             console.log(`found ${events.length} events`);
             if (events.length > 0) {
-                await writeOutput(args, events.map(maps[command]), appendFile);
+                await writeOutput(args, events.map(maps[args.command]), appendFile);
                 appendFile = true;
             }
         } catch (error) {
@@ -83,20 +87,32 @@ function getArgs() {
         }
     };
 
-    return yargs.usage("\nUsage: rrp-events <event type: full | template | fulfilled | failed | sponsor>")
+    const args = yargs.usage("\nUsage: rrp-events <event type: full | template | fulfilled | failed | sponsor>")
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, rsk, etc...", type: "string", default: "ethereum" })
         .option("f", { alias: "from", describe: "From block number", type: "number", default: 0 })
         .option("t", { alias: "to", describe: "To block number", type: "number", default: "latest" })
         .option("b", { alias: "by", describe: "Number of blocks per request", type: "number" })
         .option("o", { alias: "output", describe: "Output file .json or .csv", type: "string" })
-        .command("full", "Query MadeFullRequest events", airnodeRequestOptions)
-        .command("template", "Query MadeTemplateRequest events", airnodeRequestOptions)
-        .command("fulfilled", "Query FulfilledRequest events", airnodeRequestOptions)
-        .command("failed", "Query FailedRequest events", airnodeRequestOptions)
-        .command("sponsor", "Query SetSponsorshipStatus events", sponsorRequesterOptions)
+        .command("full", "Search for MadeFullRequest events", airnodeRequestOptions)
+        .command("template", "Search for MadeTemplateRequest events", airnodeRequestOptions)
+        .command("fulfilled", "Search for FulfilledRequest events", airnodeRequestOptions)
+        .command("failed", "Search for FailedRequest events", airnodeRequestOptions)
+        .command("sponsor", "Search for SetSponsorshipStatus events", sponsorRequesterOptions)
         .command("networks", "List all available networks")
-        .demandCommand(1, "Need to specify an event type: full | template | fulfilled | failed | sponsor")
+        .demandCommand(1, "Need to specify command or event type: full | template | fulfilled | failed | sponsor | networks")
+        .strict()
         .help(true).argv;
+
+    args.command = args._[0];
+    args.eventType = {
+        full: "MadeFullRequest",
+        template: "MadeTemplateRequest",
+        fulfilled: "FulfilledRequest",
+        failed: "FailedRequest",
+        sponsor: "SetSponsorshipStatus"
+    }[args.command];
+
+    return args;
 }
 
 function getAbi() {
