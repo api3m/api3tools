@@ -4,6 +4,7 @@ const fs = require('fs');
 const yargs = require("yargs");
 const ethers = require("ethers");
 const csv = require('objects-to-csv');
+const path = require('path');
 
 (async function () {
 
@@ -61,7 +62,7 @@ const csv = require('objects-to-csv');
     ];
 
     const command = args._[0];
-    const networkPath = "./networks"
+    const networkPath = path.join(path.dirname(__dirname), "networks");
 
     if (command == "networks") {
         const networks = fs.readdirSync(networkPath);
