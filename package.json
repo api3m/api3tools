@@ -4,7 +4,7 @@
   "description": "Command line tools to interact with with Airnode on chain",
   "main": "index.js",
   "bin": {
-    "rrp-events": "./bin/rrp-events.js"
+    "rrplogs": "./bin/rrplogs.js"
   },
   "scripts": {
     "test": "test"

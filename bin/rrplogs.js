@@ -99,7 +99,7 @@ function getArgs() {
         }
     };
 
-    const args = yargs.usage("\nUsage: rrp-events <event type: full | template | fulfilled | failed | sponsor>")
+    const args = yargs.usage("\nUsage: rrplogs <event type: full | template | fulfilled | failed | sponsor>")
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, rsk, etc...", type: "string", default: "ethereum" })
         .option("f", { alias: "from", describe: "From block number", type: "number", default: 0 })
         .option("t", { alias: "to", describe: "To block number", type: "number", default: "latest" })
