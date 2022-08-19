@@ -62,6 +62,7 @@ const path = require('path');
             return;
         }
     }
+    closeOutput(args, totalFound);
 
     const fileMessage = args.output ? `, stored in ${args.output}` : "";
     console.log(`Found ${totalFound} ${args.eventType} events` + fileMessage);
@@ -211,16 +212,27 @@ async function prepareForBlockRangeLoop(args, provider) {
 async function writeOutput(args, events, append) {
     if (args.output) {
         if (args.output.endsWith(".json")) {
-            if (append) {
-                fs.appendFileSync(args.output, JSON.stringify(events));
-            } else {
-                fs.writeFileSync(args.output, JSON.stringify(events));
-            }
+            writeJsonOutput(args, events, append);
         } else if (args.output.endsWith(".csv")) {
             await new csv(events).toDisk(args.output, { append })
         }
     } else {
         console.log(events);
+    }
+}
+
+function writeJsonOutput(args, events, append) {
+    const s = JSON.stringify(events).slice(1, -1); // remove the array brackets
+    if (append) {
+        fs.appendFileSync(args.output, "," + s);
+    } else {
+        fs.writeFileSync(args.output, "[" + s);
+    }
+}
+
+function closeOutput(args, totalFound) {
+    if (args.output.endsWith(".json") && totalFound > 0) {
+        fs.appendFileSync(args.output, "]");
     }
 }
 
