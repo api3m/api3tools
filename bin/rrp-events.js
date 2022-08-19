@@ -8,6 +8,51 @@ const path = require('path');
 
 (async function () {
 
+    const args = getArgs();
+    const abi = getAbi();
+    const command = args._[0];
+    const projectPath = path.dirname(__dirname);
+    const networksPath = path.join(projectPath, "networks");
+
+    if (command == "networks") {
+        listNetworks(networksPath);
+        return;
+    }
+
+    let network = null;
+    try {
+        network = JSON.parse(fs.readFileSync(`${networksPath}/${args.network}.json`, 'utf8'));
+    } catch (error) {
+        console.error(error.message);
+        return;
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(network.rpc);
+    const contract = new ethers.Contract(network.contract, abi, provider);
+    const filters = getFilters(args, contract);
+    const maps = getMaps();
+
+    await prepareForBlockRangeLoop(args, provider);
+
+    let appendFile = false;
+    for (let f = args.from; f <= args.to; f += args.by) {
+        let t = Math.min(f + args.by - 1, args.to);
+        process.stdout.write(`Searching blocks ${f} to ${t}: `);
+        try {
+            const events = await contract.queryFilter(filters[command], f, t);
+            console.log(`found ${events.length} events`);
+            if (events.length > 0) {
+                await writeOutput(args, events.map(maps[command]), appendFile);
+                appendFile = true;
+            }
+        } catch (error) {
+            handleQueryException(error);
+        }
+    }
+
+}());
+
+function getArgs() {
     const airnodeRequestOptions = {
         airnode: {
             alias: "a",
@@ -38,7 +83,7 @@ const path = require('path');
         }
     };
 
-    const args = yargs.usage("\nUsage: rrp-events <event type: full | template | fulfilled | failed | sponsor>")
+    return yargs.usage("\nUsage: rrp-events <event type: full | template | fulfilled | failed | sponsor>")
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, rsk, etc...", type: "string", default: "ethereum" })
         .option("f", { alias: "from", describe: "From block number", type: "number", default: 0 })
         .option("t", { alias: "to", describe: "To block number", type: "number", default: "latest" })
@@ -52,50 +97,30 @@ const path = require('path');
         .command("networks", "List all available networks")
         .demandCommand(1, "Need to specify an event type: full | template | fulfilled | failed | sponsor")
         .help(true).argv;
+}
 
-    const abi = [
+function getAbi() {
+    return [
         "event SetSponsorshipStatus(address indexed sponsor, address indexed requester, bool sponsorshipStatus)",
         "event MadeTemplateRequest(address indexed airnode, bytes32 indexed requestId, uint256 requesterRequestCount, uint256 chainId, address requester, bytes32 templateId, address sponsor, address sponsorWallet, address fulfillAddress, bytes4 fulfillFunctionId, bytes parameters)",
         "event MadeFullRequest(address indexed airnode, bytes32 indexed requestId, uint256 requesterRequestCount, uint256 chainId, address requester, bytes32 endpointId, address sponsor, address sponsorWallet, address fulfillAddress, bytes4 fulfillFunctionId, bytes parameters)",
         "event FulfilledRequest(address indexed airnode, bytes32 indexed requestId, bytes data)",
         "event FailedRequest(address indexed airnode, bytes32 indexed requestId, string errorMessage)"
     ];
+}
 
-    const command = args._[0];
-    const networkPath = path.join(path.dirname(__dirname), "networks");
-
-    if (command == "networks") {
-        const networks = fs.readdirSync(networkPath);
-        networks.forEach(filename => {
-            const parts = filename.split(".");
-            if (parts.length == 2 && parts[1] == "json") {
-                const network = JSON.parse(fs.readFileSync(`${networkPath}/${filename}`, 'utf8'));
-                console.log(parts[0] + ": " + network.name);
-            }
-        });
-        return;
+function getFilters(args, contract) {
+    return {
+        full: contract.filters.MadeFullRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
+        template: contract.filters.MadeTemplateRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
+        fulfilled: contract.filters.FulfilledRequest(args.airnode, args.request, null),
+        failed: contract.filters.FailedRequest(args.airnode, args.request, null),
+        sponsor: contract.filters.SetSponsorshipStatus(args.sponsor, args.requester, null)
     }
+}
 
-    let network = null;
-    try {
-        network = JSON.parse(fs.readFileSync(`${networkPath}/${args.network}.json`, 'utf8'));
-    } catch (error) {
-        console.error(error.message);
-        return;
-    }
-
-    const provider = new ethers.providers.JsonRpcProvider(network.rpc);
-    const rrp = new ethers.Contract(network.contract, abi, provider);
-
-    const filters = {
-        full: rrp.filters.MadeFullRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
-        template: rrp.filters.MadeTemplateRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
-        fulfilled: rrp.filters.FulfilledRequest(args.airnode, args.request, null),
-        failed: rrp.filters.FailedRequest(args.airnode, args.request, null),
-        sponsor: rrp.filters.SetSponsorshipStatus(args.sponsor, args.requester, null)
-    };
-
-    const maps = {
+function getMaps() {
+    return {
         full: x => ({
             block: x.blockNumber,
             transaction: x.transactionHash,
@@ -134,68 +159,54 @@ const path = require('path');
             sponsor: x.args.sponsor,
             requester: x.args.requester
         })
-    }
-
-    formats = {
-        console: function (results) {
-            console.log(results)
-        },
-        json: function (results) {
-            console.log(JSON.stringify(results))
-        },
-        csv: async function (results) {
-            console.log(await new csv(results).toString());
-        }
     };
+}
 
+async function prepareForBlockRangeLoop(args, provider) {
+    // Ethers accepts "latest" but we need the actual block number for the loop condition.
     if (args.to === "latest") {
         args.to = await provider.getBlockNumber();
     }
 
+    // If no by arguent, do the whole range in one query,
     if (!args.by) {
         args.by = args.to + 1;
     }
+}
 
-    let writeOutput = null;
+async function writeOutput(args, events, append) {
     if (args.output) {
         if (args.output.endsWith(".json")) {
-            writeOutput = (events, append) => {
-                if (append) {
-                    fs.appendFileSync(args.output, JSON.stringify(events));
-                } else {
-                    fs.writeFileSync(args.output, JSON.stringify(events));
-                }
-            };
+            if (append) {
+                fs.appendFileSync(args.output, JSON.stringify(events));
+            } else {
+                fs.writeFileSync(args.output, JSON.stringify(events));
+            }
         } else if (args.output.endsWith(".csv")) {
-            writeOutput = async (events, append) => {
-                await new csv(events).toDisk(args.output, { append })
-            };
+            await new csv(events).toDisk(args.output, { append })
         } else {
-            console.error("Output file must end with .json or .csv");
-            return;
+            throw new Error("Output file must end with .json or .csv");
         }
     } else {
-        writeOutput = (events) => console.log(events);
+        console.log(events);
     }
+}
 
-    let appendFile = false;
-    for (let f = args.from; f <= args.to; f += args.by) {
-        let t = Math.min(f + args.by - 1, args.to);
-        process.stdout.write(`Searching blocks ${f} to ${t}:`);
-        try {
-            const events = await rrp.queryFilter(filters[command], f, t);
-            console.log(` found ${events.length} events`);
-            if (events.length > 0) {
-                writeOutput(events.map(maps[command]), appendFile);
-                appendFile = true;
-            }
-        } catch (error) {
-            if (typeof error.body === 'string') {
-                console.error(JSON.parse(error.body).error.message);
-            } else {
-                console.error(error.message);
-            }
+function handleQueryException(error) {
+    if (typeof error.body === 'string') {
+        console.error(JSON.parse(error.body).error.message);
+    } else {
+        console.error(error.message);
+    }
+}
+
+function listNetworks(networksPath) {
+    const networks = fs.readdirSync(networksPath);
+    networks.forEach(filename => {
+        const parts = filename.split(".");
+        if (parts.length == 2 && parts[1] == "json") {
+            const network = JSON.parse(fs.readFileSync(`${networksPath}/${filename}`, 'utf8'));
+            console.log(parts[0] + ": " + network.name);
         }
-    }
-
-}());
+    });
+}
