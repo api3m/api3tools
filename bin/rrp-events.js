@@ -38,7 +38,9 @@ const path = require('path');
     await prepareForBlockRangeLoop(args, provider);
 
     console.log(`Searching blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
+
     let appendFile = false;
+    let totalFound = 0;
     for (let f = args.from; f <= args.to; f += args.by) {
         let t = Math.min(f + args.by - 1, args.to);
 
@@ -46,18 +48,23 @@ const path = require('path');
             await delay(args.wait);
         }
 
-        process.stdout.write(`Querying blocks ${f} to ${t}: `);
+        process.stdout.write(`    Querying blocks ${f} to ${t}: `);
         try {
             const events = await contract.queryFilter(filter, f, t);
             console.log(`found ${events.length} events`);
+            totalFound += events.length;
             if (events.length > 0) {
                 await writeOutput(args, events.map(maps[args.command]), appendFile);
                 appendFile = true;
             }
         } catch (error) {
             handleQueryException(error);
+            return;
         }
     }
+
+    const fileMessage = args.output ? `, stored in ${args.output}` : "";
+    console.log(`Found ${totalFound} ${args.eventType} events` + fileMessage);
 
 }());
 
