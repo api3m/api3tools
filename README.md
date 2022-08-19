@@ -99,6 +99,12 @@ $ rrp-events full --from 10000000 --to 14698562 --by 1000000
 $ rrp-events full --by 2000000
 ```
 
+If the RPC provider is enforcing a rate limit in addition to limiting the block range then use -w (--wait) to wait some number of seconds between queries. The --wait option only applies when also using the --by option.
+
+```sh
+$ rrp-events full -b 1000000 -w 2 # wait 2 seconds between queries
+```
+
 ### Output File
 
 Specify the output file with -o (--output). By default events will be pretty-printed in the console as JSON but you can write them to a JSON or CSV file instead. The format is based on the file extension.
@@ -124,8 +130,8 @@ $ rrp-events -n polygon full -f 30900000 -t 31000000 -b 10000
 $ rrp-events -n polygon fulfilled -f 30900000 -t 31000000 -b 10000
 ```
 
-Print sponsorship events on BNB Chain from block 19110000 by querying evey 5000 blocks.
+Print sponsorship events on BNB Chain from block 19110000 to block 19130000 by querying evey 5000 blocks waiting 1 second between each query.
 
 ```sh
-$ rrp-events -n bnb sponsor -f 19110000 -b 5000
+$ rrp-events -n bnb sponsor -f 19110000 -t 19130000 -b 5000 -w 1
 ```

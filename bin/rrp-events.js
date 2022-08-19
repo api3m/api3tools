@@ -41,6 +41,11 @@ const path = require('path');
     let appendFile = false;
     for (let f = args.from; f <= args.to; f += args.by) {
         let t = Math.min(f + args.by - 1, args.to);
+
+        if (args.wait && f != args.from) {
+            await delay(args.wait);
+        }
+
         process.stdout.write(`Querying blocks ${f} to ${t}: `);
         try {
             const events = await contract.queryFilter(filter, f, t);
@@ -91,7 +96,8 @@ function getArgs() {
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, rsk, etc...", type: "string", default: "ethereum" })
         .option("f", { alias: "from", describe: "From block number", type: "number", default: 0 })
         .option("t", { alias: "to", describe: "To block number", type: "number", default: "latest" })
-        .option("b", { alias: "by", describe: "Number of blocks per request", type: "number" })
+        .option("b", { alias: "by", describe: "Number of blocks per query", type: "number" })
+        .option("w", { alias: "wait", describe: "Seconds to wait between queries", type: "number" })
         .option("o", { alias: "output", describe: "Output file .json or .csv", type: "string" })
         .command("full", "Search for MadeFullRequest events", airnodeRequestOptions)
         .command("template", "Search for MadeTemplateRequest events", airnodeRequestOptions)
@@ -225,4 +231,8 @@ function listNetworks(networksPath) {
             console.log(parts[0] + ": " + network.name);
         }
     });
+}
+
+function delay(seconds) {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
