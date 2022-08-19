@@ -2,7 +2,7 @@
 
 Command line utils for interacting with Airnode on chain.
 
-* [RRP Logs](#rrp-logs-command): Search for Airnode RRP log events and dump to JSON or CSV.
+- [RRP Logs](#rrp-logs-command): Search for Airnode RRP log events and dump to JSON or CSV.
 
 ## Setup
 
@@ -21,6 +21,8 @@ The `rrplogs` command searches a chain for Airnode RRP events and either prints 
 ```sh
 $ rrplogs --help
 ```
+
+See [this guide](https://consensys.net/blog/developers/guide-to-events-and-logs-in-ethereum-smart-contracts/) and the [ethers docs](https://docs.ethers.io/v5/concepts/events/) for introduction to Ethereum logs. The Airnode RRP events are specified in the [IAirnodeRrpV0](https://github.com/api3dao/airnode/blob/master/packages/airnode-protocol/contracts/rrp/interfaces/IAirnodeRrpV0.sol) interface.
 
 ### Event Types
 
