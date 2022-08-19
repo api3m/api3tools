@@ -84,19 +84,26 @@ The `rpc` field can either be a URL string or a [ConnectionInfo](https://docs.et
 
 The `contract` field is the Airnode RRP contract address on that chain. See [here](https://docs.api3.org/airnode/v0.7/reference/airnode-addresses.html) for API3 deployed contracts.
 
-### Block Range
+### Block Range & Pagination
 
-Limit the range of blocks searched with -f (--from-block) and -t (--to-block). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or the query will respond with an error.
+Limit the range of blocks searched with -f (--from) and -t (--to). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or the query will respond with an error.
 
 ```sh
-$ rrp-events full -f 14698560 -t 14698562
+$ rrp-events full --from 14698560 -to 14698562
 ```
 
-### Output Format
-
-Specify the output format with -o (--output-format). By default events will be pretty-printed for the console as JSON but you can change that to raw JSON or CSV.
+Break the search up into multiple queries with -b (--by). By default the entire block range will be searched in a single query. Use -b when your RPC provider can't handle such a large range and you need to use multiple queries.
 
 ```sh
-$ rrp-events -o json full > airnode-full-requests.json
-$ rrp-events -o csv full > airnode-full-requests.csv
+$ rrp-events full --from 10000000 --to 14698562 --by 1000000
+$ rrp-events full --by 2000000
+```
+
+### Output File
+
+Specify the output file with -o (--output). By default events will be pretty-printed in the console as JSON but you can write them to a JSON or CSV file instead. The format is based on the file extension.
+
+```sh
+$ rrp-events full --output airnode-full-requests.json
+$ rrp-events full --output airnode-full-requests.csv
 ```
