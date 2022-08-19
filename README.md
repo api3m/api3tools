@@ -6,7 +6,9 @@ Command line utils for interacting with Airnode on chain.
 
 ## Setup
 
-Install the commands and dependencies globally.
+Install [NodeJS](https://nodejs.org/).
+
+Install the tools and dependencies globally.
 
 ```sh
 $ npm -g install
