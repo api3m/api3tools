@@ -108,7 +108,7 @@ $ rrplogs full --by 2000000
 If the RPC provider is enforcing a rate limit in addition to limiting the block range then use -w (--wait) to wait some number of seconds between queries. The --wait option only applies when also using the --by option.
 
 ```sh
-$ rrplogs full -b 1000000 -w 2 # wait 2 seconds between queries
+$ rrplogs full --by 1000000 -wait 2 # wait 2 seconds between queries
 ```
 
 ### Output File
@@ -125,19 +125,19 @@ $ rrplogs full --output airnode-full-requests.csv
 Extract all full requests and responses on Ethereum into CSV files.
 
 ```sh
-$ rrplogs full -o airnode-full-requests-eth.csv
+$ rrplogs full --output airnode-full-requests-eth.csv
 $ rrplogs fulfilled -o airnode-fulfilled-requests-eth.csv
 ```
 
 Print full requests and responses on Polygon from block 30900000 to block 31000000 by querying evey 10000 blocks.
 
 ```sh
-$ rrplogs -n polygon full -f 30900000 -t 31000000 -b 10000
+$ rrplogs -n polygon full --from 30900000 --to 31000000 --by 10000
 $ rrplogs -n polygon fulfilled -f 30900000 -t 31000000 -b 10000
 ```
 
 Print sponsorship events on BNB Chain from block 19110000 to block 19130000 by querying evey 5000 blocks waiting 1 second between each query.
 
 ```sh
-$ rrplogs -n bnb sponsor -f 19110000 -t 19130000 -b 5000 -w 1
+$ rrplogs --network bnb sponsor --from 19110000 --to 19130000 --by 5000 --wait 1
 ```

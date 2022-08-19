@@ -37,7 +37,7 @@ const path = require('path');
 
     await prepareForBlockRangeLoop(args, provider);
 
-    console.log(`Searching blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
+    console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
 
     let appendFile = false;
     let totalFound = 0;
@@ -231,7 +231,7 @@ function writeJsonOutput(args, events, append) {
 }
 
 function closeOutput(args, totalFound) {
-    if (args.output.endsWith(".json") && totalFound > 0) {
+    if (args.output && args.output.endsWith(".json") && totalFound > 0) {
         fs.appendFileSync(args.output, "]");
     }
 }
