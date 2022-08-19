@@ -35,7 +35,12 @@ const path = require('path');
     const filter = getFilters(args, contract)[args.command];
     const maps = getMaps();
 
-    await prepareForBlockRangeLoop(args, provider);
+    try {
+        await prepareForBlockRangeLoop(args, provider);
+    } catch (error) {
+        handleEthersError(error);
+        return;
+    }
 
     console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
 
@@ -58,7 +63,7 @@ const path = require('path');
                 appendFile = true;
             }
         } catch (error) {
-            handleQueryException(error);
+            handleEthersError(error);
             return;
         }
     }
@@ -151,7 +156,7 @@ function getFilters(args, contract) {
         fulfilled: contract.filters.FulfilledRequest(args.airnode, args.request, null),
         failed: contract.filters.FailedRequest(args.airnode, args.request, null),
         sponsor: contract.filters.SetSponsorshipStatus(args.sponsor, args.requester, null)
-    }
+    };
 }
 
 function getMaps() {
@@ -236,7 +241,7 @@ function closeOutput(args, totalFound) {
     }
 }
 
-function handleQueryException(error) {
+function handleEthersError(error) {
     if (typeof error.body === 'string') {
         console.error(JSON.parse(error.body).error.message);
     } else {
