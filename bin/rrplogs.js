@@ -116,6 +116,11 @@ function getArgs() {
         .strict()
         .help(true).argv;
 
+    if (args.output && !(args.output.endsWith(".json") || args.output.endsWith(".csv"))) {
+        console.log("Output file name must end with .json or .csv");
+        return null;
+    }
+
     args.command = args._[0];
     args.eventType = {
         full: "MadeFullRequest",
@@ -213,8 +218,6 @@ async function writeOutput(args, events, append) {
             }
         } else if (args.output.endsWith(".csv")) {
             await new csv(events).toDisk(args.output, { append })
-        } else {
-            throw new Error("Output file must end with .json or .csv");
         }
     } else {
         console.log(events);
