@@ -106,7 +106,7 @@ function getArgs() {
         .option("t", { alias: "to", describe: "To block number", type: "number", default: "latest" })
         .option("b", { alias: "by", describe: "Number of blocks per query", type: "number" })
         .option("w", { alias: "wait", describe: "Seconds to wait between queries", type: "number" })
-        .option("o", { alias: "output", describe: "Output file .json or .csv", type: "string" })
+        .option("o", { alias: "output", describe: "Output file ending with .json or .csv", type: "string" })
         .command("full", "Search for MadeFullRequest events", airnodeRequestOptions)
         .command("template", "Search for MadeTemplateRequest events", airnodeRequestOptions)
         .command("fulfilled", "Search for FulfilledRequest events", airnodeRequestOptions)
