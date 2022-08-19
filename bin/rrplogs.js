@@ -33,7 +33,7 @@ const path = require('path');
     const provider = new ethers.providers.JsonRpcProvider(network.rpc);
     const contract = new ethers.Contract(network.contract, abi, provider);
     const filter = getFilters(args, contract)[args.command];
-    const maps = getMaps();
+    const mapping = getMaps()[args.command];
 
     try {
         await prepareForBlockRangeLoop(args, provider);
@@ -59,7 +59,7 @@ const path = require('path');
             console.log(`found ${events.length} events`);
             totalFound += events.length;
             if (events.length > 0) {
-                await writeOutput(args, events.map(maps[args.command]), appendFile);
+                await writeOutput(args, events.map(mapping), appendFile);
                 appendFile = true;
             }
         } catch (error) {
