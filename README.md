@@ -11,8 +11,8 @@ Install [NodeJS](https://nodejs.org/).
 Clone this repo. Install the tools and dependencies globally from within the repo.
 
 ```sh
-$ cd airnode-tools # Go into the repo directory
-$ npm -g install # Install globally so you can use the commands from any directory
+$ cd airnode-tools  # Go into the repo directory
+$ npm -g install    # Install globally so you can use the commands from any directory
 ```
 
 ## RRP Logs Command
