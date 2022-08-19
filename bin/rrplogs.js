@@ -202,7 +202,7 @@ async function prepareForBlockRangeLoop(args, provider) {
         args.to = await provider.getBlockNumber();
     }
 
-    // If no by arguent, do the whole range in one query,
+    // If no --by option, search the whole range in one query.
     if (!args.by) {
         args.by = args.to + 1;
     }
