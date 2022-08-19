@@ -2,6 +2,8 @@
 
 Command line utils for interacting with Airnode on chain.
 
+* [RRP Logs](#rrp-logs-command): Search for Airnode RRP log events and dump to JSON or CSV.
+
 ## Setup
 
 Install the commands and dependencies globally.
