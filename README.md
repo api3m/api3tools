@@ -4,7 +4,7 @@ Command line utils for interacting with Airnode on chain.
 
 ## Setup
 
-Install the commands and the required node modules globally.
+Install the commands and dependencies globally.
 
 ```sh
 $ npm -g install
@@ -12,7 +12,7 @@ $ npm -g install
 
 ## RRP Events Command
 
-The rrp-events command queries a chain for Airnode RRP events and prints them to stdout as either JSON or CSV so that you can analyze them with other tools. Redirect the output to a file as needed.
+The rrp-events command searches a chain for Airnode RRP events and either prints them to the terminal or writes them to a JSON or CSV file so that you can analyze them with other tools.
 
 ```sh
 $ rrp-events --help
@@ -20,7 +20,7 @@ $ rrp-events --help
 
 ### Event Types
 
-The Airnode RRP event type to query for must be given. See the event type-specific options by putting --help after the event type.
+The Airnode RRP event type to search for must be given. See the event type-specific options by putting --help after the event type.
 
 ```sh
 $ rrp-events full --help      # Query MadeFullRequest events
@@ -33,10 +33,10 @@ $ rrp-events sponsor --help   # Query SetSponsorshipStatus events
 
 ### Network
 
-Specify which chain/network with -n (--network). Each supported network has a config file in the networks folder that defaults to using a free RPC node. You can add/edit config files to configure your own RPC node or to add new networks.
+Specify which network/chain to search with -n (--network). Each supported network has a config file in the networks folder that defaults to using a free RPC node. You can add/edit config files to configure your own RPC node or to add new networks.
 
 ```sh
-$ rrp-events -n polygon full -f 31471066 -t 31481066
+$ rrp-events --network polygon full -f 31471066 -t 31481066
 ```
 
 The `networks` command lists all available networks.
