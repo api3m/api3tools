@@ -19,8 +19,29 @@ $ npm -g install    # Install globally so you can use the commands from any dire
 
 The `rrplogs` command searches a chain for Airnode RRP events and either prints them to the screen or writes them to a JSON or CSV file so that you can analyze them with other tools.
 
-```sh
+```
 $ rrplogs --help
+
+Usage: rrplogs <event type: full | template | fulfilled | failed | sponsor>
+
+Commands:
+  rrplogs full       Search for MadeFullRequest events
+  rrplogs template   Search for MadeTemplateRequest events
+  rrplogs fulfilled  Search for FulfilledRequest events
+  rrplogs failed     Search for FailedRequest events
+  rrplogs sponsor    Search for SetSponsorshipStatus events
+  rrplogs networks   List all available networks
+
+Options:
+      --version  Show version number                                   [boolean]
+  -n, --network  Network: ethereum, polygon, rsk, etc...
+                                                  [string] [default: "ethereum"]
+  -f, --from     From block number                         [number] [default: 0]
+  -t, --to       To block number                    [number] [default: "latest"]
+  -b, --by       Number of blocks per query                             [number]
+  -w, --wait     Seconds to wait between queries                        [number]
+  -o, --output   Output file ending with .json or .csv                  [string]
+      --help     Show help                                             [boolean]
 ```
 
 See [this guide](https://consensys.net/blog/developers/guide-to-events-and-logs-in-ethereum-smart-contracts/) and the [ethers docs](https://docs.ethers.io/v5/concepts/events/) for introduction to Ethereum logs. The Airnode RRP events are specified in the [IAirnodeRrpV0](https://github.com/api3dao/airnode/blob/master/packages/airnode-protocol/contracts/rrp/interfaces/IAirnodeRrpV0.sol) interface.
