@@ -164,7 +164,7 @@ $ rrplogs -n polygon full --from 30900000 --to 31000000 --by 10000
 $ rrplogs -n polygon fulfilled -f 30900000 -t 31000000 -b 10000
 ```
 
-Print sponsorship events on BNB Chain on June 27th, 2022 by querying evey 5000 blocks waiting 5 seconds between each query.
+Print sponsorship events on BNB Chain on June 27th, 2022 by querying every 5000 blocks and waiting 5 seconds between each query.
 
 ```sh
 $ rrplogs --network bnb sponsor --from 2022-06-27T00:00:00Z --to 2022-06-27T23:59:59Z --by 5000 --wait 5
