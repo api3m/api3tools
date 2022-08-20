@@ -36,8 +36,8 @@ Options:
       --version  Show version number                                   [boolean]
   -n, --network  Network: ethereum, polygon, rsk, etc...
                                                   [string] [default: "ethereum"]
-  -f, --from     From block number                         [number] [default: 0]
-  -t, --to       To block number                    [number] [default: "latest"]
+  -f, --from     From block number or ISO8601 date       [string] [default: "0"]
+  -t, --to       To block number or ISO8601 date    [string] [default: "latest"]
   -b, --by       Number of blocks per query                             [number]
   -w, --wait     Seconds to wait between queries                        [number]
   -o, --output   Output file ending with .json or .csv                  [string]
@@ -117,7 +117,13 @@ The `contract` field is the Airnode RRP contract address on that chain. See [her
 Limit the range of blocks searched with -f (--from) and -t (--to). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or the query will respond with an error.
 
 ```sh
-$ rrplogs full --from 14698560 -to 14698562
+$ rrplogs full --from 14698560 -to 14698562 # from block 14698560 to block 14698562
+```
+
+The -f (--from) and -t (--to) options can accept an ISO8601 date/time string instead of a block number. The block after the date/time will be used for --from and the block before the date/time will be used for --to.
+
+```sh
+$ rrplogs full --from 2022-01-01 --to 2022-07-10T13:20:40Z # from block 13917761 to block 15115098
 ```
 
 Break the search up into multiple queries with -b (--by). By default the entire block range will be searched in a single query. Use -b when your RPC provider can't handle such a large range and you need to use multiple queries.
@@ -158,8 +164,8 @@ $ rrplogs -n polygon full --from 30900000 --to 31000000 --by 10000
 $ rrplogs -n polygon fulfilled -f 30900000 -t 31000000 -b 10000
 ```
 
-Print sponsorship events on BNB Chain from block 19110000 to block 19130000 by querying evey 5000 blocks waiting 1 second between each query.
+Print sponsorship events on BNB Chain on June 27th, 2022 by querying evey 5000 blocks waiting 5 seconds between each query.
 
 ```sh
-$ rrplogs --network bnb sponsor --from 19110000 --to 19130000 --by 5000 --wait 1
+$ rrplogs --network bnb sponsor --from 2022-06-27T00:00:00Z --to 2022-06-27T23:59:59Z --by 5000 --wait 5
 ```

@@ -5,6 +5,8 @@ const yargs = require("yargs");
 const ethers = require("ethers");
 const csv = require('objects-to-csv');
 const path = require('path');
+const EthDater = require('ethereum-block-by-date');
+const moment = require('moment');
 
 (async function () {
 
@@ -107,8 +109,8 @@ function getArgs() {
 
     const args = yargs.usage("\nUsage: rrplogs <event type: full | template | fulfilled | failed | sponsor>")
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, rsk, etc...", type: "string", default: "ethereum" })
-        .option("f", { alias: "from", describe: "From block number", type: "number", default: 0 })
-        .option("t", { alias: "to", describe: "To block number", type: "number", default: "latest" })
+        .option("f", { alias: "from", describe: "From block number or ISO8601 date", type: "string", default: "0" })
+        .option("t", { alias: "to", describe: "To block number or ISO8601 date", type: "string", default: "latest" })
         .option("b", { alias: "by", describe: "Number of blocks per query", type: "number" })
         .option("w", { alias: "wait", describe: "Seconds to wait between queries", type: "number" })
         .option("o", { alias: "output", describe: "Output file ending with .json or .csv", type: "string" })
@@ -203,14 +205,38 @@ function getMaps() {
 }
 
 async function prepareForBlockRangeLoop(args, provider) {
-    // Ethers accepts "latest" but we need the actual block number for the loop condition.
+    args.from = await getBlockByNumberOrDate("from", args.from, provider);
+
     if (args.to === "latest") {
+        // Ethers accepts "latest" but we need the actual block number for the loop condition.
         args.to = await provider.getBlockNumber();
+    } else {
+        args.to = await getBlockByNumberOrDate("to", args.to, provider);
     }
 
     // If no --by option, search the whole range in one query.
     if (!args.by) {
         args.by = args.to + 1;
+    }
+}
+
+async function getBlockByNumberOrDate(which, given, provider) {
+    const givenAsNumber = Number(given);
+    if (Number.isInteger(givenAsNumber) && givenAsNumber >= 0) {
+        // If it's a positive integer assume it's a block number
+        return givenAsNumber;
+    } else if (moment(given, moment.ISO_8601).isValid()) {
+        // Otherwise treat it as a date string
+        const dater = new EthDater(provider);
+        const found = await dater.getDate(given, which == "from");
+        if (found && found.block) {
+            console.log(`Using --${which} block ${found.block} for date/time ${given}`);
+            return found.block;
+        } else {
+            throw new Error("Could not find block for date/time: " + given);
+        }
+    } else {
+        throw new Error("Invalid block number or date/time: " + given);
     }
 }
 
