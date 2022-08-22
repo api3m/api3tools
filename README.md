@@ -141,8 +141,9 @@ $ rrplogs full --from -1000 --to 1000000  # Search blocks 999000 to 1000000
 The --from and --to options can accept an ISO 8601 date/time string ([parsed by Moment.js](https://momentjs.com/docs/#/parsing/string/)) instead of a block number. The block after the date/time will be used for --from and the block before the date/time will be used for --to. If you only provide a date and omit the time part of the string then your local time zone is used.
 
 ```sh
-$ rrplogs full --from 2022-01-01T00Z --to 2022-07-10T13:20:40Z # From midnight Jan 1 to 1:20:40pm July 10 GMT
-$ rrplogs full --from 2022-01-01 --to 2022-07-10 # From midnight Jan 1 to midnight July 10 local time zone
+$ rrplogs full --from 2022-01-01T00Z --to 2022-07-10T13:20:40Z      # From midnight Jan 1 to 1:20:40pm July 10 GMT
+$ rrplogs full --from "2022-01-01 00Z" --to "2022-07-10 13:20:40Z"  # Same as above but with space instead of T (needs quotes)
+$ rrplogs full --from 2022-01-01 --to 2022-07-10  # From midnight Jan 1 to midnight July 10 local time zone
 ```
 
 Break the search up into multiple queries with -b (--by). By default the entire block range will be searched in a single query. Use -b when your RPC provider can't handle such a large range and you need to use multiple queries.
