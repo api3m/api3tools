@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const assert = require('assert');
 const yargs = require("yargs");
 const ethers = require("ethers");
 const csv = require('objects-to-csv');
@@ -205,14 +206,30 @@ function getMaps() {
 }
 
 async function prepareForBlockRangeLoop(args, provider) {
-    args.from = await getBlockByNumberOrDate("from", args.from, provider);
+    const blockNumber = await provider.getBlockNumber();
 
     if (args.to === "latest") {
         // Ethers accepts "latest" but we need the actual block number for the loop condition.
-        args.to = await provider.getBlockNumber();
+        args.to = blockNumber;
     } else {
         args.to = await getBlockByNumberOrDate("to", args.to, provider);
     }
+
+    if (args.to < 0) {
+        // It's a negative offset from the current block number.
+        assert(-args.to <= blockNumber, `Cannot search to offset ${args.to} when current block is ${blockNumber}`);
+        args.to = blockNumber + args.to;
+    }
+
+    args.from = await getBlockByNumberOrDate("from", args.from, provider);
+
+    if (args.from < 0) {
+        // It's a negative offset from the end of the range.
+        assert(-args.from <= args.to, `Cannot search from offset ${args.from} when end of range is ${args.to}`);
+        args.from = args.to + args.from;
+    }
+
+    assert(args.from <= args.to, `Cannot search from ${args.from} to ${args.to}`)
 
     // If no --by option, search the whole range in one query.
     if (!args.by) {
@@ -222,8 +239,8 @@ async function prepareForBlockRangeLoop(args, provider) {
 
 async function getBlockByNumberOrDate(which, given, provider) {
     const givenAsNumber = Number(given);
-    if (Number.isInteger(givenAsNumber) && givenAsNumber >= 0) {
-        // If it's a positive integer assume it's a block number
+    if (Number.isInteger(givenAsNumber)) {
+        // If it's an integer assume it's a block number or a negative offset
         return givenAsNumber;
     } else if (moment(given, moment.ISO_8601).isValid()) {
         // Otherwise treat it as a date string

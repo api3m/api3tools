@@ -120,7 +120,15 @@ Limit the range of blocks searched with -f (--from) and -t (--to). By default th
 $ rrplogs full --from 14698560 -to 14698562 # from block 14698560 to block 14698562
 ```
 
-The -f (--from) and -t (--to) options can accept an ISO8601 date/time string instead of a block number. The block after the date/time will be used for --from and the block before the date/time will be used for --to.
+If --to is negative then it will be treated as an offset from the current block number. If --from is negative then it will be treated as an offset from --to.
+
+```sh
+$ rrplogs full --from -1000               # Search the last 1000 blocks
+$ rrplogs full --to -1000                 # Search from block 0 up to the last 1000 blocks
+$ rrplogs full --from -1000 --to 1000000  # Search blocks 999000 to 1000000
+```
+
+The --from and --to options can accept an ISO8601 date/time string instead of a block number. The block after the date/time will be used for --from and the block before the date/time will be used for --to.
 
 ```sh
 $ rrplogs full --from 2022-01-01 --to 2022-07-10T13:20:40Z # from block 13917761 to block 15115098
