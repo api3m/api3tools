@@ -1,0 +1,5 @@
+{
+    "name": "Goerli (Ethereum) Testnet",
+    "rpc": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+    "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+}

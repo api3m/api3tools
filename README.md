@@ -12,7 +12,14 @@ Clone this repo. Install the tools and dependencies globally from within the rep
 
 ```sh
 $ cd airnode-tools  # Go into the repo directory
-$ npm -g install    # Install globally so you can use the commands from any directory
+$ npm install -g    # Install globally so you can use the commands from any directory
+```
+
+Update to the latest version by running git pull and then npm install again.
+
+```sh
+$ git pull        # Get the latest code
+$ npm install -g  # Install the latest code
 ```
 
 ## RRP Logs Command
@@ -51,11 +58,11 @@ See [this guide](https://consensys.net/blog/developers/guide-to-events-and-logs-
 The Airnode RRP event type to search for must be given. See the event type-specific options by putting --help after the event type.
 
 ```sh
-$ rrplogs full --help      # Query MadeFullRequest events
-$ rrplogs template --help  # Query MadeTemplateRequest events
-$ rrplogs fulfilled --help # Query FulfilledRequest events
-$ rrplogs failed --help    # Query FailedRequest events
-$ rrplogs sponsor --help   # Query SetSponsorshipStatus events
+$ rrplogs full --help      # Search for MadeFullRequest events
+$ rrplogs template --help  # Search for MadeTemplateRequest events
+$ rrplogs fulfilled --help # Search for FulfilledRequest events
+$ rrplogs failed --help    # Search for FailedRequest events
+$ rrplogs sponsor --help   # Search for SetSponsorshipStatus events
 
 ```
 
@@ -64,7 +71,8 @@ $ rrplogs sponsor --help   # Query SetSponsorshipStatus events
 Specify which network/chain to search with -n (--network). Each supported network has a config file in the networks folder that defaults to using a free RPC node. You can add/edit config files to configure your own RPC node or to add new networks.
 
 ```sh
-$ rrplogs --network polygon full -f 31471066 -t 31481066
+$ rrplogs full --network polygon
+$ rrplogs full -n goerli
 ```
 
 The `networks` command lists all available networks.
@@ -77,12 +85,14 @@ bnb: BNB Chain Mainnet
 ethereum: Ethereum Mainnet
 fantom: Fantom Opera Mainnet
 gnosis: Gnosis Chain Mainnet
+goerli: Goerli (Ethereum) Testnet
 metis: Metis Andromeda Mainnet
 milkomeda: Milkomeda C1 Mainnet
 moonbeam: Moonbeam (Polkadot) Mainnet
 moonriver: Moonriver (Kusama) Canary Net
 optimism: Optimism Mainnet
 polygon: Polygon Mainnet
+rinkeby: Rinkeby (Ethereum) Testnet
 rsk: Rootstock (RSK) Mainnet
 ```
 
@@ -102,7 +112,7 @@ The `rpc` field can either be a URL string or a [ConnectionInfo](https://docs.et
 {
   "name": "Ethereum Mainnet",
   "rpc": {
-    "url": "https://mainnet.infura.io/v3/",
+    "url": "https://myprivaterpc.com/v3/",
     "user": "myusername",
     "password": "MyPassword!!!"
   },
@@ -114,7 +124,7 @@ The `contract` field is the Airnode RRP contract address on that chain. See [her
 
 ### Block Range & Pagination
 
-Limit the range of blocks searched with -f (--from) and -t (--to). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or the query will respond with an error.
+Limit the range of blocks searched with -f (--from) and -t (--to). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or your query will respond with an error.
 
 ```sh
 $ rrplogs full --from 14698560 -to 14698562 # from block 14698560 to block 14698562
@@ -161,19 +171,25 @@ $ rrplogs full --output airnode-full-requests.csv
 Extract all full requests and responses on Ethereum into CSV files.
 
 ```sh
-$ rrplogs full --output airnode-full-requests-eth.csv
-$ rrplogs fulfilled -o airnode-fulfilled-requests-eth.csv
+$ rrplogs full --output full-requests-eth.csv
+$ rrplogs fulfilled -o fulfilled-requests-eth.csv
+```
+
+Extract full requests in the last 50000 blocks on Rinkeby into a JSON file.
+
+```sh
+$ rrplogs full --network rinkeby --from -50000 -o full-requests-rinkeby.json
 ```
 
 Print full requests and responses on Polygon from block 30900000 to block 31000000 by querying evey 10000 blocks.
 
 ```sh
-$ rrplogs -n polygon full --from 30900000 --to 31000000 --by 10000
-$ rrplogs -n polygon fulfilled -f 30900000 -t 31000000 -b 10000
+$ rrplogs full -n polygon --from 30900000 --to 31000000 --by 10000
+$ rrplogs fulfilled -n polygon -f 30900000 -t 31000000 -b 10000
 ```
 
 Print sponsorship events on BNB Chain on June 27th, 2022 by querying every 5000 blocks and waiting 5 seconds between each query.
 
 ```sh
-$ rrplogs --network bnb sponsor --from 2022-06-27 --to 2022-06-28 --by 5000 --wait 5
+$ rrplogs sponsor --network bnb --from 2022-06-27 --to 2022-06-28 --by 5000 --wait 5
 ```
