@@ -48,16 +48,16 @@ const moment = require('moment');
 
     let appendFile = false;
     let totalFound = 0;
-    for (let f = args.from; f <= args.to; f += args.by) {
-        let t = Math.min(f + args.by - 1, args.to);
+    for (let queryFrom = args.from; queryFrom <= args.to; queryFrom += args.by) {
+        let queryTo = Math.min(queryFrom + args.by - 1, args.to);
 
-        if (args.wait && f != args.from) {
+        if (args.wait && queryFrom != args.from) {
             await delay(args.wait);
         }
 
-        process.stdout.write(`    Querying blocks ${f} to ${t}: `);
+        process.stdout.write(`    Querying blocks ${queryFrom} to ${queryTo}: `);
         try {
-            const events = await contract.queryFilter(filter, f, t);
+            const events = await contract.queryFilter(filter, queryFrom, queryTo);
             console.log(`found ${events.length} events`);
             totalFound += events.length;
             if (events.length > 0) {
