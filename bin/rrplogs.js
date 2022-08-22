@@ -207,6 +207,7 @@ function getMaps() {
 
 async function prepareForBlockRangeLoop(args, provider) {
     const blockNumber = await provider.getBlockNumber();
+    assert(blockNumber && blockNumber > 0, "Got a non-positive block number, something is wrong");
 
     if (args.to === "latest") {
         // Ethers accepts "latest" but we need the actual block number for the loop condition.
@@ -229,11 +230,17 @@ async function prepareForBlockRangeLoop(args, provider) {
         args.from = args.to + args.from;
     }
 
-    assert(args.from <= args.to, `Cannot search from ${args.from} to ${args.to}`)
+    assert(args.from >= 0 && args.to >= args.from, `Cannot search from ${args.from} to ${args.to}`)
 
     // If no --by option, search the whole range in one query.
-    if (!args.by) {
+    if (args.by === undefined) {
         args.by = args.to + 1;
+    }
+
+    assert(args.by > 0, `Can't search by queries of non-positive size ${args.by}`);
+
+    if (args.wait !== undefined) {
+        assert(args.wait > 0, `Can't wait for non-positive seconds ${args.wait} between queries`);
     }
 }
 
@@ -247,6 +254,7 @@ async function getBlockByNumberOrDate(which, given, provider) {
         const dater = new EthDater(provider);
         const found = await dater.getDate(given, which == "from");
         if (found && found.block) {
+            assert(found.block >= 0, `Found negative block number ${found.block} for date/time ${given}`);
             console.log(`Using --${which} block ${found.block} for date/time ${given}`);
             return found.block;
         } else {
