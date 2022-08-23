@@ -68,7 +68,7 @@ $ rrplogs sponsor --help   # Search for SetSponsorshipStatus events
 
 ### Network
 
-Specify which network/chain to search with -n (--network). Each supported network has a config file in the networks folder that defaults to using a free RPC node. You can add/edit config files to configure your own RPC node or to add new networks.
+Specify which network/chain to search with --network (-n). Each supported network has a config file in the networks folder that defaults to using a free RPC node. You can add/edit config files to configure your own RPC node or to add new networks.
 
 ```sh
 $ rrplogs full --network polygon  # Search Polygon mainnet
@@ -124,7 +124,7 @@ The `contract` field is the Airnode RRP contract address on that chain. See [her
 
 ### Block Range & Pagination
 
-Limit the range of blocks searched with -f (--from) and -t (--to). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or your query will respond with an error.
+Limit the range of blocks searched with --from (-f) and --to (-t). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or your query will respond with an error.
 
 ```sh
 $ rrplogs full --from 14698560 -to 14698562 # Search from block 14698560 to block 14698562
@@ -146,14 +146,14 @@ $ rrplogs full --from "2022-01-01 00Z" --to "2022-07-10 13:20:40Z"  # Same as ab
 $ rrplogs full --from 2022-01-01 --to 2022-07-10  # From midnight Jan 1 to midnight July 10 local time zone
 ```
 
-Break the search up into multiple queries with -b (--by). By default the entire block range will be searched in a single query. Use -b when your RPC provider can't handle such a large range and you need to use multiple queries.
+Break the search up into multiple queries with --by (-b). By default the entire block range will be searched in a single query. Use --by when your RPC provider can't handle such a large range and you need to use multiple queries.
 
 ```sh
 $ rrplogs full --from 10000000 --to 14698562 --by 1000000  # Search range with queries of 1000000 blocks
 $ rrplogs full --by 2000000                                # Search the whole chain with queries of 2000000 blocks
 ```
 
-If the RPC provider is enforcing a rate limit in addition to limiting the block range then use -w (--wait) to wait some number of seconds between queries. The --wait option only applies when also using the --by option.
+If the RPC provider is enforcing a rate limit in addition to limiting the block range then use --wait (-w) to wait some number of seconds between queries. The --wait option only applies when also using the --by option.
 
 ```sh
 $ rrplogs full --by 1000000 --wait 2 # Wait 2 seconds between queries
@@ -161,7 +161,7 @@ $ rrplogs full --by 1000000 --wait 2 # Wait 2 seconds between queries
 
 ### Output File
 
-Specify the output file with -o (--output). By default events will be pretty-printed in the console as JSON but you can write them to a JSON or CSV file instead. The format is based on the file extension.
+Specify the output file with --output (-o). By default events will be pretty-printed in the console as JSON but you can write them to a JSON or CSV file instead. The format is determined by the file extension.
 
 ```sh
 $ rrplogs full --output full-requests.json  # Store results in a JSON file
