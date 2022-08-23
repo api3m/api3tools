@@ -90,6 +90,7 @@ metis: Metis Andromeda Mainnet
 milkomeda: Milkomeda C1 Mainnet
 moonbeam: Moonbeam (Polkadot) Mainnet
 moonriver: Moonriver (Kusama) Canary Net
+mumbai: Mumbai (Polygon) Testnet
 optimism: Optimism Mainnet
 polygon: Polygon Mainnet
 rinkeby: Rinkeby (Ethereum) Testnet
