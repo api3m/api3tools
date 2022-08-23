@@ -10,7 +10,6 @@ const EthDater = require('ethereum-block-by-date');
 const moment = require('moment');
 
 (async function () {
-
     const args = getArgs();
     const abi = getAbi();
     if (!args || !abi) {
@@ -72,9 +71,8 @@ const moment = require('moment');
     }
     closeOutput(args, totalFound);
 
-    const fileMessage = args.output ? `, stored in ${args.output}` : "";
+    const fileMessage = (totalFound > 0 && args.output) ? `, stored in ${args.output}` : "";
     console.log(`Found ${totalFound} ${args.eventType} events` + fileMessage);
-
 }());
 
 function getArgs() {

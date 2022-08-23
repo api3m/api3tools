@@ -93,6 +93,7 @@ moonriver: Moonriver (Kusama) Canary Net
 optimism: Optimism Mainnet
 polygon: Polygon Mainnet
 rinkeby: Rinkeby (Ethereum) Testnet
+ropsten: Ropsten (Ethereum) Testnet
 rsk: Rootstock (RSK) Mainnet
 ```
 
