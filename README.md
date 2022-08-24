@@ -249,6 +249,18 @@ $ dapilogs updatedsigned --help  # Search for UpdatedBeaconWithSignedData events
 
 [Event types](#event-types), [networks](#network), [range limitinig & paginaton](#block-range--pagination), and [output](#output-file) work exacly like `rrplogs`. See details in the `rrplogs` docs above.
 
+The networks available for `dapilogs` are limited to those with a `dapi` contract entry in the network file.
+
+```sh
+$ dapilogs networks
+avalanche: Avalanche C-Chain
+bnb: BNB Chain Mainnet
+milkomeda: Milkomeda C1 Mainnet
+mumbai: Mumbai (Polygon) Testnet
+polygon: Polygon Mainnet
+rsk: Rootstock (RSK) Mainnet
+```
+
 ### dAPI Logs Examples
 
 Extract UpdatedBeaconWithSignedData events from Mumbai on August 23rd (local time). First extract all of them. Then run again filterng to only get the Amberdata BTC/USD 5-min spot VWAP updates.
