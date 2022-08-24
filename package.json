@@ -4,7 +4,8 @@
   "description": "Command line tools to interact with with Airnode on chain",
   "main": "index.js",
   "bin": {
-    "rrplogs": "./bin/rrplogs.js"
+    "rrplogs": "./bin/rrplogs.js",
+    "dapilogs": "./bin/dapilogs.js"
   },
   "scripts": {
     "test": "test"
