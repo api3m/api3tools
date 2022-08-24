@@ -6,8 +6,8 @@ const logs = require(path.join(__dirname, '..', 'src', 'logs-command.js'));
 logs.initialize('dapi');
 
 logs.addEvent({
-    name: "name",
     type: "SetDapiName",
+    alias: "name",
     options: {
         name: {
             type: "string",
@@ -30,8 +30,8 @@ logs.addEvent({
 });
 
 logs.addEvent({
-    name: "ubsd",
     type: "UpdatedBeaconWithSignedData",
+    alias: "ubwsd",
     options: {
         id: {
             type: "string",

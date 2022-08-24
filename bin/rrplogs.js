@@ -19,8 +19,8 @@ const airnodeRequestOptions = {
 };
 
 logs.addEvent({
-    name: "full",
     type: "MadeFullRequest",
+    alias: "full",
     options: airnodeRequestOptions,
     abi: "event MadeFullRequest(address indexed airnode, bytes32 indexed requestId, uint256 requesterRequestCount, uint256 chainId, address requester, bytes32 endpointId, address sponsor, address sponsorWallet, address fulfillAddress, bytes4 fulfillFunctionId, bytes parameters)",
     filter: (args, f) => f.MadeFullRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
@@ -34,8 +34,8 @@ logs.addEvent({
 });
 
 logs.addEvent({
-    name: "template",
     type: "MadeTemplateRequest",
+    alias: "template",
     options: airnodeRequestOptions,
     abi: "event MadeTemplateRequest(address indexed airnode, bytes32 indexed requestId, uint256 requesterRequestCount, uint256 chainId, address requester, bytes32 templateId, address sponsor, address sponsorWallet, address fulfillAddress, bytes4 fulfillFunctionId, bytes parameters)",
     filter: (args, f) => f.MadeTemplateRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
@@ -49,8 +49,8 @@ logs.addEvent({
 });
 
 logs.addEvent({
-    name: "fulfilled",
     type: "FulfilledRequest",
+    alias: "fulfilled",
     options: airnodeRequestOptions,
     abi: "event FulfilledRequest(address indexed airnode, bytes32 indexed requestId, bytes data)",
     filter: (args, f) => f.FulfilledRequest(args.airnode, args.request, null),
@@ -62,8 +62,8 @@ logs.addEvent({
 });
 
 logs.addEvent({
-    name: "failed",
     type: "FailedRequest",
+    alias: "failed",
     options: airnodeRequestOptions,
     abi: "event FailedRequest(address indexed airnode, bytes32 indexed requestId, string errorMessage)",
     filter: (args, f) => f.FailedRequest(args.airnode, args.request, null),
@@ -75,8 +75,8 @@ logs.addEvent({
 });
 
 logs.addEvent({
-    name: "sponsor",
     type: "SetSponsorshipStatus",
+    alias: "sponsor",
     options: {
         sponsor: {
             type: "string",

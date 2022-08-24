@@ -13,15 +13,16 @@ module.exports = {
     runCommand
 };
 
-const definitions = {}; // event definitions
+const eventAliases = {};
+const eventDefinitons = {};
 let contractType = null; // rrp or dapi
 let args = null; // yargs argv
 
 function initialize(cType) {
     contractType = cType;
 
-    args = yargs.usage(`\nUsage: ${contractType}logs <event name | networks>`)
-        .option("n", { alias: "network", describe: "Network: ethereum, polygon, rsk, etc...", type: "string", default: "ethereum" })
+    args = yargs.usage(`\nUsage: ${contractType}logs <event type | networks>`)
+        .option("n", { alias: "network", describe: "Network: ethereum, polygon, ...", type: "string", default: "ethereum" })
         .option("f", { alias: "from", describe: "From block number or ISO8601 date", type: "string", default: "0" })
         .option("t", { alias: "to", describe: "To block number or ISO8601 date", type: "string", default: "latest" })
         .option("b", { alias: "by", describe: "Number of blocks per query", type: "number" })
@@ -30,16 +31,17 @@ function initialize(cType) {
 }
 
 function addEvent(event) {
-    args = args.command(event.name, `Search for ${event.type} events`, event.options);
-    definitions[event.name] = {
-        type: event.type,
+    eventAliases[event.type] = event.type;
+    eventAliases[event.alias] = event.type;
+    args = args.command([event.type, event.alias], `Search for events`, event.options);
+    eventDefinitons[event.type] = {
         abi: event.abi,
         createFilter: event.filter,
         map: event.map
     };
 }
 
-async function runCommand(command) {
+async function runCommand() {
     try {
         finalizeArgs();
     } catch (error) {
@@ -60,7 +62,7 @@ async function runCommand(command) {
         return;
     }
 
-    const definition = definitions[args.command];
+    const definition = eventDefinitons[args.eventType];
     const provider = new ethers.providers.JsonRpcProvider(network.rpc);
     const contract = new ethers.Contract(network.contracts[contractType], [definition.abi], provider);
     const filter = definition.createFilter(args, contract.filters);
@@ -72,7 +74,7 @@ async function runCommand(command) {
         return;
     }
 
-    console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${definition.type} events...`);
+    console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
 
     let appendFile = false;
     let totalFound = 0;
@@ -100,15 +102,15 @@ async function runCommand(command) {
     closeOutput(totalFound);
 
     const fileMessage = (totalFound > 0 && args.output) ? `, stored in ${args.output}` : "";
-    console.log(`Found ${totalFound} ${definition.type} events` + fileMessage);
+    console.log(`Found ${totalFound} ${args.eventType} events` + fileMessage);
 }
 
 function finalizeArgs() {
     assert(contractType, "Must provide contract type");
-    assert(Object.keys(definitions).length > 0, "Must provide event definitions");
+    assert(Object.keys(eventDefinitons).length > 0, "Must provide event definitions");
 
     args = args.command("networks", "List all available networks")
-        .demandCommand(1, "Must provide command: <event name | networks>")
+        .demandCommand(1, "Must provide a command: <event type | networks>")
         .strict()
         .help(true).argv;
     assert(args, "Yargs argv is falsy");
@@ -119,6 +121,9 @@ function finalizeArgs() {
 
     args.networksPath = path.join(__dirname, "..", "networks");
     args.command = args._[0];
+    if (args.command in eventAliases) {
+        args.eventType = eventAliases[args.command];
+    }
 }
 
 function getNetwork(networkId, checkForContract) {
@@ -193,8 +198,8 @@ async function getBlockByNumberOrDate(which, given, provider) {
     }
 }
 
-function mapEvent(event, argsMap) {
-    const mapped = argsMap(event.args);
+function mapEvent(event, eventArgsMap) {
+    const mapped = eventArgsMap(event.args);
     mapped.blockNumber = event.blockNumber;
     mapped.transaction = event.transactionHash;
     return mapped;
