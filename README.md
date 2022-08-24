@@ -13,7 +13,8 @@ Command line tools for interacting with API3 & Airnode on chain.
 
 ```sh
 $ cd api3tools    # Go into the repo directory
-$ npm install -g  # Install globally so you can use the commands from any directory
+$ npm install     # Install node modules locally
+$ npm install -g  # Install commands globally so you can use them from any directory
 ```
 
 Update to the latest version by running git pull and then npm install again.
