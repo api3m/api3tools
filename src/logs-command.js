@@ -14,10 +14,13 @@ module.exports = {
 };
 
 const definitions = {}; // event definitions
+let contractType = null; // rrp or dapi
 let args = null; // yargs argv
 
-function initialize(command) {
-    args = yargs.usage(`\nUsage: ${command} <event name | networks>`)
+function initialize(cType) {
+    contractType = cType;
+
+    args = yargs.usage(`\nUsage: ${contractType}logs <event name | networks>`)
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, rsk, etc...", type: "string", default: "ethereum" })
         .option("f", { alias: "from", describe: "From block number or ISO8601 date", type: "string", default: "0" })
         .option("t", { alias: "to", describe: "To block number or ISO8601 date", type: "string", default: "latest" })
@@ -51,7 +54,7 @@ async function runCommand(command) {
 
     let network = null;
     try {
-        network = JSON.parse(fs.readFileSync(path.join(args.networksPath, `${args.network}.json`), 'utf8'));
+        network = getNetwork();
     } catch (error) {
         console.error(error.message);
         return;
@@ -59,7 +62,7 @@ async function runCommand(command) {
 
     const definition = definitions[args.command];
     const provider = new ethers.providers.JsonRpcProvider(network.rpc);
-    const contract = new ethers.Contract(network.contract, [definition.abi], provider);
+    const contract = new ethers.Contract(network.contracts[contractType], [definition.abi], provider);
     const filter = definition.createFilter(args, contract.filters);
 
     try {
@@ -101,7 +104,8 @@ async function runCommand(command) {
 }
 
 function finalizeArgs() {
-    assert(definitions, "Must provide event definitions");
+    assert(contractType, "Must provide contract type");
+    assert(Object.keys(definitions).length > 0, "Must provide event definitions");
 
     args = args.command("networks", "List all available networks")
         .demandCommand(1, "Must provide command: <event name | networks>")
@@ -115,6 +119,16 @@ function finalizeArgs() {
 
     args.networksPath = path.join(__dirname, "..", "networks");
     args.command = args._[0];
+}
+
+function getNetwork() {
+    const network = JSON.parse(fs.readFileSync(path.join(args.networksPath, `${args.network}.json`), 'utf8'));
+    assert(network, `Problem reading network file`);
+    assert(network.name, `Network ${args.network} is missing name`);
+    assert(network.rpc, `Network ${args.network} is missing RPC info`);
+    assert(network.contracts, `Network ${args.network} is missing contracts`);
+    assert(network.contracts.hasOwnProperty(contractType), `Network ${args.network} is missing ${contractType} contract`);
+    return network;
 }
 
 async function prepareForBlockRangeLoop(provider) {

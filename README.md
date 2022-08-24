@@ -104,7 +104,9 @@ An example network config file is shown here.
 {
   "name": "Ethereum Mainnet",
   "rpc": "https://nodes.mewapi.io/rpc/eth",
-  "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+  "contracts": {
+        "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+    }
 }
 ```
 
@@ -118,7 +120,9 @@ The `rpc` field can either be a URL string or a [ConnectionInfo](https://docs.et
     "user": "myusername",
     "password": "MyPassword!!!"
   },
-  "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+  "contracts": {
+        "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+    }
 }
 ```
 

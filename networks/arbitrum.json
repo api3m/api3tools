@@ -1,5 +1,7 @@
 {
     "name": "Arbitrum One",
     "rpc": "https://arb1.arbitrum.io/rpc",
-    "contract": "0xb015ACeEdD478fc497A798Ab45fcED8BdEd08924"
+    "contracts": {
+        "rrp": "0xb015ACeEdD478fc497A798Ab45fcED8BdEd08924"
+    }
 }

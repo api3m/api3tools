@@ -1,5 +1,8 @@
 {
     "name": "BNB Chain Mainnet",
     "rpc": "https://bsc-dataseed.binance.org",
-    "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+    "contracts": {
+        "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd",
+        "dapi": "0x8B0A67D060C86919Ae76Ca3FA69c68Ff98E85c3c"
+    }
 }

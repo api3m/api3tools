@@ -1,20 +1,17 @@
 #!/usr/bin/env node
 
 const path = require('path');
-
 const logs = require(path.join(__dirname, '..', 'src', 'logs-command.js'));
 
-logs.initialize('rrplogs');
+logs.initialize('rrp');
 
 const airnodeRequestOptions = {
     airnode: {
-        alias: "a",
         type: "string",
         describe: "Filter to Airnode ID",
         default: null
     },
     request: {
-        alias: "r",
         type: "string",
         describe: "Filter to request ID",
         default: null
@@ -90,13 +87,11 @@ logs.addEvent({
     type: "SetSponsorshipStatus",
     options: {
         sponsor: {
-            alias: "s",
             type: "string",
             describe: "Filter to sponsor address",
             default: null
         },
         requester: {
-            alias: "r",
             type: "string",
             describe: "Filter to requester address",
             default: null

@@ -1,5 +1,7 @@
 {
     "name": "Metis Andromeda Mainnet",
     "rpc": "https://andromeda.metis.io/?owner=1088",
-    "contract": "0xC02Ea0f403d5f3D45a4F1d0d817e7A2601346c9E"
+    "contracts": {
+        "rrp": "0xC02Ea0f403d5f3D45a4F1d0d817e7A2601346c9E"
+    }
 }

@@ -1,5 +1,8 @@
 {
     "name": "Avalanche C-Chain",
     "rpc": "https://api.avax.network/ext/bc/C/rpc",
-    "contract": "0xC02Ea0f403d5f3D45a4F1d0d817e7A2601346c9E"
+    "contracts": {
+        "rrp": "0xC02Ea0f403d5f3D45a4F1d0d817e7A2601346c9E",
+        "dapi": "0x291a11cbbC441201562A6418Fd11bBeb0675b4e4"
+    }
 }

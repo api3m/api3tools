@@ -1,5 +1,8 @@
 {
     "name": "Mumbai (Polygon) Testnet",
     "rpc": "https://rpc-mumbai.maticvigil.com",
-    "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+    "contracts": {
+        "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd",
+        "dapi": "0x71Da7A936fCaEd1Ee364Df106B12deF6D1Bf1f14"
+    }
 }

@@ -1,5 +1,7 @@
 {
     "name": "Moonbeam (Polkadot) Mainnet",
     "rpc": "https://rpc.api.moonbeam.network",
-    "contract": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+    "contracts": {
+        "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+    }
 }
