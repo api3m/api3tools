@@ -33,7 +33,19 @@ function initialize(cType) {
 function addEvent(event) {
     eventAliases[event.type] = event.type;
     eventAliases[event.alias] = event.type;
-    args = args.command([event.type, event.alias], `Search for events`, event.options);
+
+    // Set option defaults
+    for (const name in event.options) {
+        const value = event.options[name];
+        if (value.type === undefined) {
+            value.type = "string"; // most options are strings
+        }
+        if (value.default === undefined) {
+            value.default = null; // default to null so ethers will ignore
+        }
+    }
+
+    args = args.command([event.type, event.alias], "Search for events", event.options);
     eventDefinitons[event.type] = {
         abi: event.abi,
         createFilter: event.filter,

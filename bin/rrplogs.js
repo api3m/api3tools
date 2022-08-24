@@ -6,16 +6,8 @@ const logs = require(path.join(__dirname, '..', 'src', 'logs-command.js'));
 logs.initialize('rrp');
 
 const airnodeRequestOptions = {
-    airnode: {
-        type: "string",
-        describe: "Filter to Airnode ID",
-        default: null
-    },
-    request: {
-        type: "string",
-        describe: "Filter to request ID",
-        default: null
-    }
+    airnode: { describe: "Filter to Airnode ID" },
+    request: { describe: "Filter to request ID" }
 };
 
 logs.addEvent({
@@ -78,16 +70,8 @@ logs.addEvent({
     type: "SetSponsorshipStatus",
     alias: "sponsor",
     options: {
-        sponsor: {
-            type: "string",
-            describe: "Filter to sponsor address",
-            default: null
-        },
-        requester: {
-            type: "string",
-            describe: "Filter to requester address",
-            default: null
-        }
+        sponsor: { describe: "Filter to sponsor address" },
+        requester: { describe: "Filter to requester address" }
     },
     abi: "event SetSponsorshipStatus(address indexed sponsor, address indexed requester, bool sponsorshipStatus)",
     filter: (args, f) => f.SetSponsorshipStatus(args.sponsor, args.requester, null),
