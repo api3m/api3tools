@@ -1,8 +1,9 @@
-# Airnode Tools
+# API3 Command Line Tools
 
-Command line utils for interacting with Airnode on chain.
+Command line tools for interacting with API3 & Airnode on chain.
 
 - [RRP Logs](#rrp-logs-command): Search for Airnode RRP log events and dump to JSON or CSV.
+- [dAPI Logs](#dapi-logs-command): Search for dAPI log events and dump to JSON or CSV.
 
 ## Setup
 
@@ -22,6 +23,8 @@ $ git pull        # Get the latest code
 $ npm install -g  # Install the latest code
 ```
 
+# Event Log Commands
+
 ## RRP Logs Command
 
 The `rrplogs` command searches a chain for Airnode RRP events and either prints them to the screen or writes them to a JSON or CSV file so that you can analyze them with other tools.
@@ -29,20 +32,19 @@ The `rrplogs` command searches a chain for Airnode RRP events and either prints 
 ```
 $ rrplogs --help
 
-Usage: rrplogs <event type: full | template | fulfilled | failed | sponsor>
+Usage: rrplogs <event type | networks>
 
 Commands:
-  rrplogs full       Search for MadeFullRequest events
-  rrplogs template   Search for MadeTemplateRequest events
-  rrplogs fulfilled  Search for FulfilledRequest events
-  rrplogs failed     Search for FailedRequest events
-  rrplogs sponsor    Search for SetSponsorshipStatus events
-  rrplogs networks   List all available networks
+  rrplogs MadeFullRequest       Search                           [aliases: full]
+  rrplogs MadeTemplateRequest   Search                       [aliases: template]
+  rrplogs FulfilledRequest      Search                      [aliases: fulfilled]
+  rrplogs FailedRequest         Search                         [aliases: failed]
+  rrplogs SetSponsorshipStatus  Search                        [aliases: sponsor]
+  rrplogs networks              List all available networks
 
 Options:
       --version  Show version number                                   [boolean]
-  -n, --network  Network: ethereum, polygon, rsk, etc...
-                                                  [string] [default: "ethereum"]
+  -n, --network  Network: ethereum, polygon, ...  [string] [default: "ethereum"]
   -f, --from     From block number or ISO8601 date       [string] [default: "0"]
   -t, --to       To block number or ISO8601 date    [string] [default: "latest"]
   -b, --by       Number of blocks per query                             [number]
@@ -55,7 +57,9 @@ See [this guide](https://consensys.net/blog/developers/guide-to-events-and-logs-
 
 ### Event Types
 
-The Airnode RRP event type to search for must be given. See the event type-specific options by putting --help after the event type.
+The Airnode RRP event type to search for must be given. Either the full event type name or a shorter alias can be given. The examples below use aliases for brevity.
+
+See event type-specific options by putting --help after the event type.
 
 ```sh
 $ rrplogs full --help      # Search for MadeFullRequest events
@@ -63,7 +67,6 @@ $ rrplogs template --help  # Search for MadeTemplateRequest events
 $ rrplogs fulfilled --help # Search for FulfilledRequest events
 $ rrplogs failed --help    # Search for FailedRequest events
 $ rrplogs sponsor --help   # Search for SetSponsorshipStatus events
-
 ```
 
 ### Network
@@ -105,8 +108,8 @@ An example network config file is shown here.
   "name": "Ethereum Mainnet",
   "rpc": "https://nodes.mewapi.io/rpc/eth",
   "contracts": {
-        "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
-    }
+    "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+  }
 }
 ```
 
@@ -116,13 +119,13 @@ The `rpc` field can either be a URL string or a [ConnectionInfo](https://docs.et
 {
   "name": "Ethereum Mainnet",
   "rpc": {
-    "url": "https://myprivaterpc.com/v3/",
+    "url": "https://myprivaterpc.com/",
     "user": "myusername",
     "password": "MyPassword!!!"
   },
   "contracts": {
-        "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
-    }
+    "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd"
+  }
 }
 ```
 
@@ -174,7 +177,7 @@ $ rrplogs full --output full-requests.json  # Store results in a JSON file
 $ rrplogs full --output full-requests.csv   # Store results in a CSV file
 ```
 
-### Examples
+### RRP Logs Examples
 
 Extract all full requests and responses on Ethereum into CSV files.
 
@@ -200,4 +203,57 @@ Print sponsorship events on BNB Chain on June 27th, 2022 (local time) by queryin
 
 ```sh
 $ rrplogs sponsor --network bnb --from 2022-06-27 --to 2022-06-28 --by 5000 --wait 5
+```
+
+## dAPI Logs Command
+
+The `dapilogs` command searches a chain for dAPI events and either prints them to the screen or writes them to a JSON or CSV file so that you can analyze them with other tools. It works very much like `rrplogs` so [get familar with rrplogs](#rrp-logs-command) first.
+
+```
+Usage: dapilogs <event type | networks>
+
+Commands:
+  dapilogs                                  Search
+  SetRrpBeaconUpdatePermissionStatus                       [aliases: permission]
+  dapilogs RequestedRrpBeaconUpdate         Search          [aliases: requested]
+  dapilogs RequestedRrpBeaconUpdateRelayed  Search            [aliases: relayed]
+  dapilogs UpdatedBeaconWithRrp             Search         [aliases: updatedrrp]
+  dapilogs                                  Search
+  RegisteredBeaconUpdateSubscription                     [aliases: subscription]
+  dapilogs UpdatedBeaconWithPsp             Search         [aliases: updatedpsp]
+  dapilogs UpdatedBeaconWithSignedData      Search      [aliases: updatedsigned]
+  dapilogs UpdatedBeaconSetWithBeacons      Search  [aliases: updatedsetbeacons]
+  dapilogs UpdatedBeaconSetWithSignedData   Search   [aliases: updatedsetsigned]
+  dapilogs AddedUnlimitedReader             Search          [aliases: unlimited]
+  dapilogs SetDapiName                      Search           [aliases: namedapi]
+  dapilogs networks                         List all available networks
+
+Options:
+      --version  Show version number                                   [boolean]
+  -n, --network  Network: ethereum, polygon, ...  [string] [default: "ethereum"]
+  -f, --from     From block number or ISO8601 date       [string] [default: "0"]
+  -t, --to       To block number or ISO8601 date    [string] [default: "latest"]
+  -b, --by       Number of blocks per query                             [number]
+  -w, --wait     Seconds to wait between queries                        [number]
+  -o, --output   Output file ending with .json or .csv                  [string]
+      --help     Show help                                             [boolean]
+```
+
+See event type-specific options by putting --help after the event type.
+
+```sh
+$ dapilogs requested --help      # Search for RequestedRrpBeaconUpdate events
+$ dapilogs updatedsigned --help  # Search for UpdatedBeaconWithSignedData events
+...
+```
+
+[Event types](#event-types), [networks](#network), [range limitinig & paginaton](#block-range--pagination), and [output](#output-file) work exacly like `rrplogs`. See details in the `rrplogs` docs above.
+
+### dAPI Logs Examples
+
+Extract UpdatedBeaconWithSignedData events from Mumbai on August 23rd (local time). First extract all of them. Then run again filterng to only get the Amberdata BTC/USD 5-min spot VWAP updates.
+
+```sh
+$ dapilogs updatedsigned -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-all-signed-updates.csv
+$ dapilogs updatedsigned --beacon 0x0dc124b07cc935112d87b49c806c5c880659dd7a2ef75b4ea04460cf224ea2c0 -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-btc-usd-signed-updates.csv
 ```
