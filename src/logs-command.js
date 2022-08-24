@@ -54,7 +54,7 @@ async function runCommand(command) {
 
     let network = null;
     try {
-        network = getNetwork();
+        network = getNetwork(args.network, true);
     } catch (error) {
         console.error(error.message);
         return;
@@ -121,13 +121,15 @@ function finalizeArgs() {
     args.command = args._[0];
 }
 
-function getNetwork() {
-    const network = JSON.parse(fs.readFileSync(path.join(args.networksPath, `${args.network}.json`), 'utf8'));
+function getNetwork(networkId, checkForContract) {
+    const network = JSON.parse(fs.readFileSync(path.join(args.networksPath, `${networkId}.json`), 'utf8'));
     assert(network, `Problem reading network file`);
-    assert(network.name, `Network ${args.network} is missing name`);
-    assert(network.rpc, `Network ${args.network} is missing RPC info`);
-    assert(network.contracts, `Network ${args.network} is missing contracts`);
-    assert(network.contracts.hasOwnProperty(contractType), `Network ${args.network} is missing ${contractType} contract`);
+    assert(network.name, `Network ${networkId} is missing name`);
+    assert(network.rpc, `Network ${networkId} is missing RPC info`);
+    assert(network.contracts, `Network ${networkId} is missing contracts object`);
+    if (checkForContract) {
+        assert(network.contracts.hasOwnProperty(contractType), `Network ${networkId} is missing ${contractType} contract`);
+    }
     return network;
 }
 
@@ -238,8 +240,14 @@ function listNetworks() {
     networks.forEach(filename => {
         const parts = filename.split(".");
         if (parts.length == 2 && parts[1] == "json") {
-            const network = JSON.parse(fs.readFileSync(`${args.networksPath}/${filename}`, 'utf8'));
-            console.log(parts[0] + ": " + network.name);
+            try {
+                const network = getNetwork(parts[0], false);
+                if (network.contracts.hasOwnProperty(contractType)) {
+                    console.log(parts[0] + ": " + network.name);
+                }
+            } catch (error) {
+                console.error('!!! ' + error.message);
+            }
         }
     });
 }
