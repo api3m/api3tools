@@ -1,7 +1,7 @@
 {
-  "name": "airnode-tools",
+  "name": "api3tools",
   "version": "0.1.0",
-  "description": "Command line tools to interact with with Airnode on chain",
+  "description": "Command line tools to interact with with API3 & Airnode on chain",
   "main": "index.js",
   "bin": {
     "rrplogs": "./bin/rrplogs.js",
@@ -12,20 +12,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/api3m/airnode-tools.git"
+    "url": "git+https://github.com/api3m/api3tools.git"
   },
   "keywords": [
-    "Airnode",
     "API3",
+    "Airnode",
     "Web3",
     "oracle"
   ],
   "author": "Ryan Boder",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/api3m/airnode-tools/issues"
+    "url": "https://github.com/api3m/api3tools/issues"
   },
-  "homepage": "https://github.com/api3m/airnode-tools#readme",
+  "homepage": "https://github.com/api3m/api3tools#readme",
   "dependencies": {
     "ethereum-block-by-date": "^1.4.5",
     "ethers": "^5.6.9",

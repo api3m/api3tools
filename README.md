@@ -7,12 +7,12 @@ Command line tools for interacting with API3 & Airnode on chain.
 
 ## Setup
 
-Install [NodeJS](https://nodejs.org/).
-
-Clone this repo. Install the tools and dependencies globally from within the repo.
+1. Install [NodeJS](https://nodejs.org/).
+2. Clone this repo.
+3. Install the tools and dependencies globally from within the repo.
 
 ```sh
-$ cd airnode-tools  # Go into the repo directory
+$ cd api3tools  # Go into the repo directory
 $ npm install -g    # Install globally so you can use the commands from any directory
 ```
 
