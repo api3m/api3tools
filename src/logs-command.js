@@ -89,7 +89,7 @@ async function runCommand(command) {
             console.log(`found ${events.length} events`);
             totalFound += events.length;
             if (events.length > 0) {
-                await writeOutput(events.map(definition.map), appendFile);
+                await writeOutput(events.map(x => mapEvent(x, definition.map)), appendFile);
                 appendFile = true;
             }
         } catch (error) {
@@ -189,6 +189,13 @@ async function getBlockByNumberOrDate(which, given, provider) {
     } else {
         throw new Error("Invalid block number or date/time: " + given);
     }
+}
+
+function mapEvent(event, argsMap) {
+    const mapped = argsMap(event.args);
+    mapped.blockNumber = event.blockNumber;
+    mapped.transaction = event.transactionHash;
+    return mapped;
 }
 
 async function writeOutput(events, append) {

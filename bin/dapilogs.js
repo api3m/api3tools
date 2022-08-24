@@ -23,11 +23,9 @@ logs.addEvent({
     abi: "event SetDapiName(bytes32 indexed dapiName, bytes32 dataFeedId, address indexed sender)",
     filter: (args, f) => f.SetDapiName(args.name, null, args.sender),
     map: x => ({
-        block: x.blockNumber,
-        transaction: x.transactionHash,
-        name: x.args.dapiName,
-        sender: x.args.sender,
-        feed: x.args.dataFeedId
+        dapiName: x.dapiName,
+        dataFeedId: x.dataFeedId,
+        sender: x.sender
     })
 });
 
@@ -44,11 +42,9 @@ logs.addEvent({
     abi: "event UpdatedBeaconWithSignedData(bytes32 indexed beaconId, int256 value, uint256 timestamp)",
     filter: (args, f) => f.UpdatedBeaconWithSignedData(args.id, null, null),
     map: x => ({
-        block: x.blockNumber,
-        transaction: x.transactionHash,
-        id: x.args.beaconId,
-        value: x.args.value,
-        timestamp: x.args.timestamp
+        beaconId: x.beaconId,
+        value: x.value.toHexString(),
+        timestamp: x.timestamp.toNumber()
     })
 });
 
