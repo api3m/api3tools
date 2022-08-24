@@ -7,7 +7,7 @@ logs.initialize('dapi');
 
 logs.addEvent({
     type: "SetRrpBeaconUpdatePermissionStatus",
-    alias: "srbups",
+    alias: "permission",
     options: {
         sponsor: { describe: "Filter to sponsor address" },
         requester: { describe: "Filter to requester address" }
@@ -23,7 +23,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "RequestedRrpBeaconUpdate",
-    alias: "rrbu",
+    alias: "requested",
     options: {
         beacon: { describe: "Filter to beacon ID" },
         sponsor: { describe: "Filter to sponsor address" },
@@ -43,7 +43,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "RequestedRrpBeaconUpdateRelayed",
-    alias: "rrbur",
+    alias: "relayed",
     options: {
         beacon: { describe: "Filter to beacon ID" },
         sponsor: { describe: "Filter to sponsor address" },
@@ -64,7 +64,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "UpdatedBeaconWithRrp",
-    alias: "ubwr",
+    alias: "updatedrrp",
     options: {
         beacon: { describe: "Filter to beacon ID" }
     },
@@ -80,7 +80,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "RegisteredBeaconUpdateSubscription",
-    alias: "rbus",
+    alias: "subscription",
     options: {
         subscription: { describe: "Filter to subscription ID" }
     },
@@ -101,7 +101,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "UpdatedBeaconWithPsp",
-    alias: "ubwp",
+    alias: "updatedpsp",
     options: {
         beacon: { describe: "Filter to beacon ID" }
     },
@@ -117,7 +117,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "UpdatedBeaconWithSignedData",
-    alias: "ubwsd",
+    alias: "updatedsigned",
     options: {
         beacon: { describe: "Filter to beacon ID" }
     },
@@ -132,7 +132,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "UpdatedBeaconSetWithBeacons",
-    alias: "ubswb",
+    alias: "updatedsetbeacons",
     options: {
         beaconset: { describe: "Filter to beacon set ID" }
     },
@@ -147,7 +147,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "UpdatedBeaconSetWithSignedData",
-    alias: "ubswsd",
+    alias: "updatedsetsigned",
     options: {
         dapi: { describe: "Filter to dAPI ID" }
     },
@@ -162,7 +162,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "AddedUnlimitedReader",
-    alias: "aur",
+    alias: "unlimited",
     options: {
         reader: { describe: "Filter to reader address" }
     },
@@ -175,7 +175,7 @@ logs.addEvent({
 
 logs.addEvent({
     type: "SetDapiName",
-    alias: "sdn",
+    alias: "namedapi",
     options: {
         name: { describe: "Filter to dAPI name" },
         sender: { describe: "Filter to sender address" }

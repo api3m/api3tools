@@ -45,7 +45,7 @@ function addEvent(event) {
         }
     }
 
-    args = args.command([event.type, event.alias], "Search for events", event.options);
+    args = args.command([event.type, event.alias], "Search", event.options);
     eventDefinitons[event.type] = {
         abi: event.abi,
         createFilter: event.filter,
