@@ -21,7 +21,8 @@ Update to the latest version by running git pull and then npm install again.
 
 ```sh
 $ git pull        # Get the latest code
-$ npm install -g  # Install the latest code
+$ npm update      # Update node modules locally
+$ npm install -g  # Install any new commands globally
 ```
 
 # Event Log Commands
@@ -250,7 +251,20 @@ $ dapilogs updatedsigned --help  # Search for UpdatedBeaconWithSignedData events
 
 [Event types](#event-types), [networks](#network), [range limitinig & paginaton](#block-range--pagination), and [output](#output-file) work exacly like `rrplogs`. See details in the `rrplogs` docs above.
 
-The networks available for `dapilogs` are limited to those with a `dapi` contract entry in the network file.
+Network files can provide the DapiServer address in a `dapi` contracts entry. For example:
+
+```json
+{
+  "name": "BNB Chain Mainnet",
+  "rpc": "https://bsc-dataseed.binance.org",
+  "contracts": {
+    "rrp": "0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd",
+    "dapi": "0x8B0A67D060C86919Ae76Ca3FA69c68Ff98E85c3c"
+  }
+}
+```
+
+The networks available for `dapilogs` are limited to those with a `dapi` contract entry.
 
 ```sh
 $ dapilogs networks
@@ -264,9 +278,9 @@ rsk: Rootstock (RSK) Mainnet
 
 ### dAPI Logs Examples
 
-Extract UpdatedBeaconWithSignedData events from Mumbai on August 23rd (local time). First extract all of them. Then run again filterng to only get the Amberdata BTC/USD 5-min spot VWAP updates.
+Extract UpdatedBeaconWithSignedData events from Mumbai on August 23rd (local time). In the first example we extract all of them. In the second example we filter to only get [Amberdata BTC/USD 5-min spot VWAP](https://market.api3.org/beacons/polygon/0x0dc124b07cc935112d87b49c806c5c880659dd7a2ef75b4ea04460cf224ea2c0) updates.
 
 ```sh
-$ dapilogs updatedsigned -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-all-signed-updates.csv
-$ dapilogs updatedsigned --beacon 0x0dc124b07cc935112d87b49c806c5c880659dd7a2ef75b4ea04460cf224ea2c0 -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-btc-usd-signed-updates.csv
+$ dapilogs updatedsigned -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-all-signed-updates.csv # Get all signed updates
+$ dapilogs updatedsigned --beacon 0x0dc124b07cc935112d87b49c806c5c880659dd7a2ef75b4ea04460cf224ea2c0 -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-btc-usd-signed-updates.csv # Only get signed updates with the given beacon ID
 ```
