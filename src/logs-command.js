@@ -246,7 +246,11 @@ function closeOutput(totalFound) {
 
 function handleEthersError(error) {
     if (typeof error.body === 'string') {
-        console.error(JSON.parse(error.body).error.message);
+        try {
+            console.error(JSON.parse(error.body).error.message);
+        } catch (e) {
+            console.error(e.message + ": " + error.body);
+        }
     } else {
         console.error(error.message);
     }
