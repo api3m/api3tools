@@ -6,6 +6,7 @@ const csv = require('objects-to-csv');
 const path = require('path');
 const EthDater = require('ethereum-block-by-date');
 const moment = require('moment');
+const csvtojson = require('csvtojson');
 
 module.exports = {
     initialize,
@@ -54,28 +55,29 @@ function addEvent(event) {
 }
 
 async function runCommand() {
+    let network = null;
+    let provider = null;
     try {
         finalizeArgs();
-    } catch (error) {
-        console.error(error.message);
-        return;
-    }
 
-    if (args.command == "networks") {
-        listNetworks();
-        return;
-    }
+        if (args.command == "networks") {
+            listNetworks();
+            return;
+        }
 
-    let network = null;
-    try {
         network = getNetwork(args.network, true);
+        provider = new ethers.providers.JsonRpcProvider(network.rpc);
+
+        if (args.command == "groupbydate") {
+            await groupByDate(provider);
+            return;
+        }
     } catch (error) {
         console.error(error.message);
         return;
     }
 
     const definition = eventDefinitons[args.eventType];
-    const provider = new ethers.providers.JsonRpcProvider(network.rpc);
     const contract = new ethers.Contract(network.contracts[contractType], [definition.abi], provider);
     const filter = definition.createFilter(args, contract.filters);
 
@@ -122,6 +124,7 @@ function finalizeArgs() {
     assert(Object.keys(eventDefinitons).length > 0, "Must provide event definitions");
 
     args = args.command("networks", "List all available networks")
+        .command("groupbydate", "Add column to CSV file grouping by date", { input: { alias: "i", describe: "Input file", type: "string", demandOption: true } })
         .demandCommand(1, "Must provide a command: <event type | networks>")
         .strict()
         .help(true).argv;
@@ -222,7 +225,7 @@ async function writeOutput(events, append) {
         if (args.output.endsWith(".json")) {
             writeJsonOutput(events, append);
         } else if (args.output.endsWith(".csv")) {
-            await new csv(events).toDisk(args.output, { append })
+            await new csv(events).toDisk(args.output, { append });
         }
     } else {
         console.log(events);
@@ -271,6 +274,60 @@ function listNetworks() {
             }
         }
     });
+}
+
+async function groupByDate(provider) {
+    assert(args.input.endsWith(".csv"), `Input file ${args.input} must be CSV`);
+
+    console.log(`Grouping ${args.network} events from ${args.input} by date in ${args.output}`);
+
+    csvtojson().fromFile(args.input).then(async (events) => {
+        // Find the start times of the first and last groups
+        const firstBlock = await provider.getBlock(parseInt(events[0].blockNumber));
+        const firstGroupStartTime = moment.utc(moment.unix(firstBlock.timestamp).utc().format("YYYY-MM-DD"));
+        const lastBlock = await provider.getBlock(parseInt(events[events.length - 1].blockNumber));
+        const lastGroupStartTime = moment.utc(moment.unix(lastBlock.timestamp).utc().format("YYYY-MM-DD")).add(1, 'days'); // add 1 to help search loop
+
+        // Cache to speed up this painfully slow process
+        const firstBlocksCacheFile = path.join(__dirname, "..", "cache", `first-blocks-by-date-${args.network}.json`);
+        const firstBlocksCache = fs.existsSync(firstBlocksCacheFile) ? JSON.parse(fs.readFileSync(firstBlocksCacheFile, 'utf8')) : {};
+
+        // Build a list of date groups to search through
+        const groups = [];
+        const dater = new EthDater(provider);
+        for (let groupStartTime = firstGroupStartTime; groupStartTime.unix() <= lastGroupStartTime.unix(); groupStartTime = groupStartTime.add(1, 'days')) {
+            const groupLabel = groupStartTime.format("YYYY-MM-DD");
+            let firstBlock = firstBlocksCache[groupLabel];
+            if (firstBlock === undefined) {
+                const found = await dater.getDate(groupStartTime.toISOString(), true);
+                if (found && found.block) {
+                    assert(found.block >= 0, `Found negative block number ${found.block} for date/time ${groupStartTime.toISOString()}`);
+                    console.log(`    Found first block ${found.block} for group ${groupLabel}`);
+                    firstBlock = found.block;
+                    firstBlocksCache[groupLabel] = firstBlock;
+                    fs.writeFileSync(firstBlocksCacheFile, JSON.stringify(firstBlocksCache));
+                } else {
+                    throw new Error("Could not find block for date/time: " + groupStartTime.toISOString());
+                }
+            }
+            groups.push({
+                firstBlock: firstBlock,
+                label: groupLabel
+            });
+        }
+
+        // For each event, search the date groups and place the event in a group
+        events.forEach(event => {
+            for (let i = 0; i < groups.length; i++) {
+                if (event.blockNumber >= groups[i].firstBlock && event.blockNumber < groups[i + 1].firstBlock) {
+                    event.dateGroup = groups[i].label;
+                }
+            }
+        });
+
+        await writeOutput(events, false);
+    })
+
 }
 
 function delay(seconds) {
