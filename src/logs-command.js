@@ -215,6 +215,7 @@ async function getBlockByNumberOrDate(which, given, provider) {
 
 function mapEvent(event, eventArgsMap) {
     const mapped = eventArgsMap(event.args);
+    mapped.network = args.network;
     mapped.blockNumber = event.blockNumber;
     mapped.transaction = event.transactionHash;
     return mapped;
