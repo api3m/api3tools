@@ -327,8 +327,10 @@ async function addDates(provider) {
         });
 
         await writeOutput(events, false);
+        if (args.output) {
+            console.log(`Stored output in ${args.output}`);
+        }
     })
-
 }
 
 function delay(seconds) {
