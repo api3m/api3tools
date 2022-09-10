@@ -182,7 +182,7 @@ $ rrplogs full --output full-requests.csv   # Store results in a CSV file
 
 ### Adding Dates
 
-Unfortunately, EVM events don't come with a date or time. The log data we get back only has the block number. We can get the date of each block by making a seperate query but doing so is incredibly slow and inefficient using remote queries. Use the dates command to effiiciently add a date column to a CSV file already saved from a previous rrplogs command.
+Unfortunately, EVM events don't come with a date or time. The log data only has the block number. We can get the date of each block by making a seperate query but doing so is incredibly slow and inefficient using remote queries. Use the `dates` command to efficiently add a date column to a CSV file already saved from a previous rrplogs command.
 
 Provide the CSV file from a previously-run rrplogs command with --input (-i). Specify the network with --network (-n) and the output file with --output (-o) as usual. Make sure the network is the same as was used to create the input file. Otherwise the block numbers will not make sense.
 
@@ -219,7 +219,7 @@ Print sponsorship events on BNB Chain on June 27th, 2022 (local time) by queryin
 $ rrplogs sponsor --network bnb --from 2022-06-27 --to 2022-06-28 --by 5000 --wait 5
 ```
 
-Combine CSV files created from different networks into a single file. Uses the [xsv command](https://github.com/BurntSushi/xsv/blob/master/README.md).
+Combine CSV files created from different networks into a single file. Uses the [xsv command](https://github.com/BurntSushi/xsv/blob/master/README.md). Only combine files with the same event types because different event types have different columns.
 
 ```sh
 $ rrplogs full --network rinkeby --output rinkeby.csv  # Get full requests from rinkeby
