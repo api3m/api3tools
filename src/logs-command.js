@@ -124,7 +124,7 @@ function finalizeArgs() {
     assert(Object.keys(eventDefinitons).length > 0, "Must provide event definitions");
 
     args = args.command("networks", "List all available networks")
-        .command("groupbydate", "Add column to CSV file grouping by date", { input: { alias: "i", describe: "Input file", type: "string", demandOption: true } })
+        .command("groupbydate", "Add date column to CSV file", { input: { alias: "i", describe: "Input file", type: "string", demandOption: true } })
         .demandCommand(1, "Must provide a command: <event type | networks>")
         .strict()
         .help(true).argv;
@@ -321,7 +321,7 @@ async function groupByDate(provider) {
         events.forEach(event => {
             for (let i = 0; i < groups.length; i++) {
                 if (event.blockNumber >= groups[i].firstBlock && event.blockNumber < groups[i + 1].firstBlock) {
-                    event.dateGroup = groups[i].label;
+                    event.date = groups[i].label;
                 }
             }
         });

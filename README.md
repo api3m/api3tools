@@ -43,6 +43,7 @@ Commands:
   rrplogs FailedRequest         Search                         [aliases: failed]
   rrplogs SetSponsorshipStatus  Search                        [aliases: sponsor]
   rrplogs networks              List all available networks
+  rrplogs groupbydate           Add date column to CSV file
 
 Options:
       --version  Show version number                                   [boolean]
@@ -167,7 +168,7 @@ $ rrplogs full --by 2000000                                # Search the whole ch
 If the RPC provider is enforcing a rate limit in addition to limiting the block range then use --wait (-w) to wait some number of seconds between queries. The --wait option only applies when also using the --by option.
 
 ```sh
-$ rrplogs full --by 1000000 --wait 2 # Wait 2 seconds between queries
+$ rrplogs full --by 1000000 --wait 2  # Wait 2 seconds between queries
 ```
 
 ### Output File
@@ -177,6 +178,17 @@ Specify the output file with --output (-o). By default events will be pretty-pri
 ```sh
 $ rrplogs full --output full-requests.json  # Store results in a JSON file
 $ rrplogs full --output full-requests.csv   # Store results in a CSV file
+```
+
+### Grouping Events By Date
+
+Unfortunately, EVM events don't come with a date or time. The log data we get back only has the block number. We can get the date of each block by making a seperate query but doing so is incredibly slow and inefficient using remote queries. Use the groupbydate command to effiiciently add a date column to a CSV file already saved from a previous rrplogs command.
+
+Provide the CSV file from a previously-run rrplogs command with --input (-i). Specify the network with --network (-n) and the output file with --output (-o) as usual. Make sure the network is the same as was used to create the input file. Otherwise the block numbers will not make sense.
+
+```sh
+$ rrplogs full --network rinkeby --output full-requests.csv  # Create the log file containing block numbers
+$ rrplogs groupbydate --network rinkeby --input full-requests.csv --output full-requests-with-dates.csv  # Add a date column
 ```
 
 ### RRP Logs Examples
@@ -207,6 +219,29 @@ Print sponsorship events on BNB Chain on June 27th, 2022 (local time) by queryin
 $ rrplogs sponsor --network bnb --from 2022-06-27 --to 2022-06-28 --by 5000 --wait 5
 ```
 
+Combine CSV files created from different networks into a single file. Uses the [xsv command](https://github.com/BurntSushi/xsv/blob/master/README.md).
+
+```sh
+$ rrplogs full --network rinkeby --output rinkeby.csv  # Get full requests from rinkeby
+$ rrplogs full --network ropsten --output ropsten.csv  # Get full requests from ropsten
+$ rrplogs full --network goerli --output goerli.csv    # Get full requests from goerli
+$ rrplogs full --network kovan --output kovan.csv      # Get full requests from kovan
+$ xsv cat rows rinkeby.csv ropsten.csv goerli.csv kovan.csv > combined.csv  # Combine them into one file
+$ xsv table combined.csv | less -S                     # See the results
+```
+
+Combine CSV files created from different networks into a single file sorted by date. Uses the [xsv command](https://github.com/BurntSushi/xsv/blob/master/README.md).
+
+```sh
+$ rrplogs full --network rinkeby --output rinkeby.csv                 # Get full requests from rinkeby
+$ rrplogs groupbydate -n rinkeby -i rinkeby.csv -o rinkeby-dated.csv  # Add a date column
+$ rrplogs full --network ropsten --output ropsten.csv                 # Get full requests from ropsten
+$ rrplogs groupbydate -n ropsten -i ropsten.csv -o ropsten-dated.csv  # Add a date column
+$ xsv cat rows rinkeby-dated.csv ropsten-dated.csv > combined.csv     # Combine them into one file
+$ xsv sort -s date combined.csv > sorted.csv                          # Sort it by date
+$ xsv table sorted.csv | less -S                                      # See the results
+```
+
 ## dAPI Logs Command
 
 The `dapilogs` command searches a chain for dAPI events and either prints them to the screen or writes them to a JSON or CSV file so that you can analyze them with other tools. It works very much like `rrplogs` so [get familar with rrplogs](#rrp-logs-command) first.
@@ -229,6 +264,7 @@ Commands:
   dapilogs AddedUnlimitedReader             Search          [aliases: unlimited]
   dapilogs SetDapiName                      Search           [aliases: namedapi]
   dapilogs networks                         List all available networks
+  dapilogs groupbydate                      Add date column to CSV file
 
 Options:
       --version  Show version number                                   [boolean]
