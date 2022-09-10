@@ -43,7 +43,7 @@ Commands:
   rrplogs FailedRequest         Search                         [aliases: failed]
   rrplogs SetSponsorshipStatus  Search                        [aliases: sponsor]
   rrplogs networks              List all available networks
-  rrplogs groupbydate           Add date column to CSV file
+  rrplogs dates                 Add date column to CSV file
 
 Options:
       --version  Show version number                                   [boolean]
@@ -180,15 +180,15 @@ $ rrplogs full --output full-requests.json  # Store results in a JSON file
 $ rrplogs full --output full-requests.csv   # Store results in a CSV file
 ```
 
-### Grouping Events By Date
+### Adding Dates
 
-Unfortunately, EVM events don't come with a date or time. The log data we get back only has the block number. We can get the date of each block by making a seperate query but doing so is incredibly slow and inefficient using remote queries. Use the groupbydate command to effiiciently add a date column to a CSV file already saved from a previous rrplogs command.
+Unfortunately, EVM events don't come with a date or time. The log data we get back only has the block number. We can get the date of each block by making a seperate query but doing so is incredibly slow and inefficient using remote queries. Use the dates command to effiiciently add a date column to a CSV file already saved from a previous rrplogs command.
 
 Provide the CSV file from a previously-run rrplogs command with --input (-i). Specify the network with --network (-n) and the output file with --output (-o) as usual. Make sure the network is the same as was used to create the input file. Otherwise the block numbers will not make sense.
 
 ```sh
 $ rrplogs full --network rinkeby --output full-requests.csv  # Create the log file containing block numbers
-$ rrplogs groupbydate --network rinkeby --input full-requests.csv --output full-requests-with-dates.csv  # Add a date column
+$ rrplogs dates --network rinkeby --input full-requests.csv --output full-requests-with-dates.csv  # Add a date column
 ```
 
 ### RRP Logs Examples
@@ -233,13 +233,13 @@ $ xsv table combined.csv | less -S                     # See the results
 Combine CSV files created from different networks into a single file sorted by date. Uses the [xsv command](https://github.com/BurntSushi/xsv/blob/master/README.md).
 
 ```sh
-$ rrplogs full --network rinkeby --output rinkeby.csv                 # Get full requests from rinkeby
-$ rrplogs groupbydate -n rinkeby -i rinkeby.csv -o rinkeby-dated.csv  # Add a date column
-$ rrplogs full --network ropsten --output ropsten.csv                 # Get full requests from ropsten
-$ rrplogs groupbydate -n ropsten -i ropsten.csv -o ropsten-dated.csv  # Add a date column
-$ xsv cat rows rinkeby-dated.csv ropsten-dated.csv > combined.csv     # Combine them into one file
-$ xsv sort -s date combined.csv > sorted.csv                          # Sort it by date
-$ xsv table sorted.csv | less -S                                      # See the results
+$ rrplogs full --network rinkeby --output rinkeby.csv              # Get full requests from rinkeby
+$ rrplogs dates -n rinkeby -i rinkeby.csv -o rinkeby-dated.csv     # Add a date column
+$ rrplogs full --network ropsten --output ropsten.csv              # Get full requests from ropsten
+$ rrplogs dates -n ropsten -i ropsten.csv -o ropsten-dated.csv     # Add a date column
+$ xsv cat rows rinkeby-dated.csv ropsten-dated.csv > combined.csv  # Combine them into one file
+$ xsv sort -s date combined.csv > sorted.csv                       # Sort it by date
+$ xsv table sorted.csv | less -S                                   # See the results
 ```
 
 ## dAPI Logs Command
@@ -264,7 +264,7 @@ Commands:
   dapilogs AddedUnlimitedReader             Search          [aliases: unlimited]
   dapilogs SetDapiName                      Search           [aliases: namedapi]
   dapilogs networks                         List all available networks
-  dapilogs groupbydate                      Add date column to CSV file
+  dapilogs dates                            Add date column to CSV file
 
 Options:
       --version  Show version number                                   [boolean]

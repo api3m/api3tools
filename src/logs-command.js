@@ -68,8 +68,8 @@ async function runCommand() {
         network = getNetwork(args.network, true);
         provider = new ethers.providers.JsonRpcProvider(network.rpc);
 
-        if (args.command == "groupbydate") {
-            await groupByDate(provider);
+        if (args.command == "dates") {
+            await addDates(provider);
             return;
         }
     } catch (error) {
@@ -124,7 +124,7 @@ function finalizeArgs() {
     assert(Object.keys(eventDefinitons).length > 0, "Must provide event definitions");
 
     args = args.command("networks", "List all available networks")
-        .command("groupbydate", "Add date column to CSV file", { input: { alias: "i", describe: "Input file", type: "string", demandOption: true } })
+        .command("dates", "Add date column to CSV file", { input: { alias: "i", describe: "Input file", type: "string", demandOption: true } })
         .demandCommand(1, "Must provide a command: <event type | networks>")
         .strict()
         .help(true).argv;
@@ -277,10 +277,10 @@ function listNetworks() {
     });
 }
 
-async function groupByDate(provider) {
+async function addDates(provider) {
     assert(args.input.endsWith(".csv"), `Input file ${args.input} must be CSV`);
 
-    console.log(`Grouping ${args.network} events from ${args.input} by date in ${args.output}`);
+    console.log(`Adding dates from ${args.network} network to events in ${args.input}`);
 
     csvtojson().fromFile(args.input).then(async (events) => {
         // Find the start times of the first and last groups
@@ -303,7 +303,7 @@ async function groupByDate(provider) {
                 const found = await dater.getDate(groupStartTime.toISOString(), true);
                 if (found && found.block) {
                     assert(found.block >= 0, `Found negative block number ${found.block} for date/time ${groupStartTime.toISOString()}`);
-                    console.log(`    Found first block ${found.block} for group ${groupLabel}`);
+                    console.log(`    Found first block ${found.block} for date ${groupLabel}`);
                     firstBlock = found.block;
                     firstBlocksCache[groupLabel] = firstBlock;
                     fs.writeFileSync(firstBlocksCacheFile, JSON.stringify(firstBlocksCache));
