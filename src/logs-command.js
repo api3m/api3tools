@@ -283,45 +283,11 @@ async function addDates(provider) {
     console.log(`Adding dates from ${args.network} network to events in ${args.input}`);
 
     csvtojson().fromFile(args.input).then(async (events) => {
-        // Find the start times of the first and last groups
-        const firstBlock = await provider.getBlock(parseInt(events[0].blockNumber));
-        const firstGroupStartTime = moment.utc(moment.unix(firstBlock.timestamp).utc().format("YYYY-MM-DD"));
-        const lastBlock = await provider.getBlock(parseInt(events[events.length - 1].blockNumber));
-        const lastGroupStartTime = moment.utc(moment.unix(lastBlock.timestamp).utc().format("YYYY-MM-DD")).add(1, 'days'); // add 1 to help search loop
-
-        // Cache to speed up this painfully slow process
-        const firstBlocksCacheFile = path.join(__dirname, "..", "cache", `first-blocks-by-date-${args.network}.json`);
-        const firstBlocksCache = fs.existsSync(firstBlocksCacheFile) ? JSON.parse(fs.readFileSync(firstBlocksCacheFile, 'utf8')) : {};
-
-        // Build a list of date groups to search through
-        const groups = [];
-        const dater = new EthDater(provider);
-        for (let groupStartTime = firstGroupStartTime; groupStartTime.unix() <= lastGroupStartTime.unix(); groupStartTime = groupStartTime.add(1, 'days')) {
-            const groupLabel = groupStartTime.format("YYYY-MM-DD");
-            let firstBlock = firstBlocksCache[groupLabel];
-            if (firstBlock === undefined) {
-                const found = await dater.getDate(groupStartTime.toISOString(), true);
-                if (found && found.block) {
-                    assert(found.block >= 0, `Found negative block number ${found.block} for date/time ${groupStartTime.toISOString()}`);
-                    console.log(`    Found first block ${found.block} for date ${groupLabel}`);
-                    firstBlock = found.block;
-                    firstBlocksCache[groupLabel] = firstBlock;
-                    fs.writeFileSync(firstBlocksCacheFile, JSON.stringify(firstBlocksCache));
-                } else {
-                    throw new Error("Could not find block for date/time: " + groupStartTime.toISOString());
-                }
-            }
-            groups.push({
-                firstBlock: firstBlock,
-                label: groupLabel
-            });
-        }
-
-        // For each event, search the date groups and place the event in a group
+        const dateGroups = await findDateGroups(provider, events);
         events.forEach(event => {
-            for (let i = 0; i < groups.length; i++) {
-                if (event.blockNumber >= groups[i].firstBlock && event.blockNumber < groups[i + 1].firstBlock) {
-                    event.date = groups[i].label;
+            for (let i = 0; i < dateGroups.length; i++) {
+                if (event.blockNumber >= dateGroups[i].firstBlock && event.blockNumber < dateGroups[i + 1].firstBlock) {
+                    event.date = dateGroups[i].label;
                 }
             }
         });
@@ -331,6 +297,47 @@ async function addDates(provider) {
             console.log(`Stored output in ${args.output}`);
         }
     })
+}
+
+async function findDateGroups(provider, events) {
+    // Find the start times of the first and last groups
+    const fileFirstBlock = await provider.getBlock(parseInt(events[0].blockNumber));
+    const firstGroupStartTime = moment.utc(moment.unix(fileFirstBlock.timestamp).utc().format("YYYY-MM-DD"));
+    const fileLastBlock = await provider.getBlock(parseInt(events[events.length - 1].blockNumber));
+    const lastGroupStartTime = moment.utc(moment.unix(fileLastBlock.timestamp).utc().format("YYYY-MM-DD")).add(1, 'days'); // add 1 to help search loop
+
+    // Cache to speed up this painfully slow process
+    const firstBlocksCacheFile = path.join(__dirname, "..", "cache", `first-blocks-by-date-${args.network}.json`);
+    const firstBlocksCache = fs.existsSync(firstBlocksCacheFile) ? JSON.parse(fs.readFileSync(firstBlocksCacheFile, 'utf8')) : {};
+
+    // Build a list of date groups to search through
+    const groups = [];
+    const dater = new EthDater(provider);
+    for (let groupStartTime = firstGroupStartTime; groupStartTime.unix() <= lastGroupStartTime.unix(); groupStartTime = groupStartTime.add(1, 'days')) {
+        const groupLabel = groupStartTime.format("YYYY-MM-DD");
+
+        let firstBlockNumber = firstBlocksCache[groupLabel];
+        if (firstBlockNumber === undefined) {
+            process.stdout.write(`    Finding first block for ${groupLabel} remotely: `);
+            const found = await dater.getDate(groupStartTime.toISOString(), true);
+            if (found && found.block) {
+                assert(found.block >= 0, `Found negative block number ${found.block} for date/time ${groupStartTime.toISOString()}`);
+                console.log(`found block ${found.block}`);
+                firstBlockNumber = found.block;
+                firstBlocksCache[groupLabel] = firstBlockNumber;
+                fs.writeFileSync(firstBlocksCacheFile, JSON.stringify(firstBlocksCache));
+            } else {
+                throw new Error("Could not find block for date/time: " + groupStartTime.toISOString());
+            }
+        }
+
+        groups.push({
+            firstBlock: firstBlockNumber,
+            label: groupLabel
+        });
+    }
+
+    return groups;
 }
 
 function delay(seconds) {
