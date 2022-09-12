@@ -193,6 +193,8 @@ $ rrplogs dates --network rinkeby --input full-requests.csv --output full-reques
 
 ### RRP Logs Examples
 
+##### Example: Full Requests & Responses
+
 Extract all full requests and responses on Ethereum into CSV files.
 
 ```sh
@@ -200,11 +202,15 @@ $ rrplogs full --output full-requests-eth.csv
 $ rrplogs fulfilled -o fulfilled-requests-eth.csv
 ```
 
+##### Example: Recent Full Requests
+
 Extract full requests in the last 50000 blocks on Rinkeby into a JSON file.
 
 ```sh
 $ rrplogs full --network rinkeby --from -50000 -o full-requests-rinkeby.json
 ```
+
+#### Example: From Block To Block By
 
 Print full requests and responses on Polygon from block 30900000 to block 31000000 by querying evey 10000 blocks.
 
@@ -213,13 +219,17 @@ $ rrplogs full -n polygon --from 30900000 --to 31000000 --by 10000
 $ rrplogs fulfilled -n polygon -f 30900000 -t 31000000 -b 10000
 ```
 
+#### Example: On Date By Wait
+
 Print sponsorship events on BNB Chain on June 27th, 2022 (local time) by querying every 5000 blocks and waiting 5 seconds between each query.
 
 ```sh
 $ rrplogs sponsor --network bnb --from 2022-06-27 --to 2022-06-28 --by 5000 --wait 5
 ```
 
-Combine CSV files created from different networks into a single file. Uses the [xsv command](https://github.com/BurntSushi/xsv/blob/master/README.md). Only combine files with the same event types because different event types have different columns.
+#### Example: Combine Networks
+
+Combine CSV files created from different networks into a single file. Only combine files with the same event types because different event types have different columns. (Uses [xsv](https://github.com/BurntSushi/xsv/blob/master/README.md))
 
 ```sh
 $ rrplogs full --network rinkeby --output rinkeby.csv  # Get full requests from rinkeby
@@ -230,7 +240,9 @@ $ xsv cat rows rinkeby.csv ropsten.csv goerli.csv kovan.csv > combined.csv  # Co
 $ xsv table combined.csv | less -S                     # See the results
 ```
 
-Combine CSV files created from different networks into a single file sorted by date. Uses the [xsv command](https://github.com/BurntSushi/xsv/blob/master/README.md).
+#### Example: Combine Networks Sort By Date
+
+Combine CSV files created from different networks into a single file sorted by date. (Uses [xsv](https://github.com/BurntSushi/xsv/blob/master/README.md))
 
 ```sh
 $ rrplogs full --network rinkeby --output rinkeby.csv              # Get full requests from rinkeby
