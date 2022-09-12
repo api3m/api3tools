@@ -219,6 +219,14 @@ $ rrplogs full -n polygon --from 30900000 --to 31000000 --by 10000
 $ rrplogs fulfilled -n polygon -f 30900000 -t 31000000 -b 10000
 ```
 
+#### Example: From Date To Date
+
+Print full requests on Ropsten from May 3rd, 2022 (UTC time) to the end of May (UTC time).
+
+```sh
+$ rrplogs full --network ropsten --from 2022-05-03T00Z --to 2022-06-01T00Z
+```
+
 #### Example: On Date By Wait
 
 Print sponsorship events on BNB Chain on June 27th, 2022 (local time) by querying every 5000 blocks and waiting 5 seconds between each query.
