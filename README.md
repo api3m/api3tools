@@ -34,7 +34,7 @@ The `rrplogs` command searches a chain for Airnode RRP events and either prints 
 ```
 $ rrplogs --help
 
-Usage: rrplogs <event type | networks>
+Usage: rrplogs <event type | command>
 
 Commands:
   rrplogs MadeFullRequest       Search                           [aliases: full]
@@ -56,7 +56,7 @@ Options:
       --help     Show help                                             [boolean]
 ```
 
-See [this guide](https://consensys.net/blog/developers/guide-to-events-and-logs-in-ethereum-smart-contracts/) and the [ethers docs](https://docs.ethers.io/v5/concepts/events/) for introduction to Ethereum logs. The Airnode RRP events are specified in the [IAirnodeRrpV0](https://github.com/api3dao/airnode/blob/master/packages/airnode-protocol/contracts/rrp/interfaces/IAirnodeRrpV0.sol) interface.
+See [this guide](https://consensys.net/blog/developers/guide-to-events-and-logs-in-ethereum-smart-contracts/) and the [ethers docs](https://docs.ethers.io/v5/concepts/events/) for introduction to Ethereum logs. The Airnode RRP events are specified in the [IAirnodeRrpV0](https://github.com/api3dao/airnode/blob/master/packages/airnode-protocol/contracts/rrp/interfaces/IAirnodeRrpV0.sol) interface. V0 is used because that's what is currently used in production for QRNG, etc... Eventually V1 will be added.
 
 ### Event Types
 
@@ -267,7 +267,9 @@ $ xsv table sorted.csv | less -S                                   # See the res
 The `dapilogs` command searches a chain for dAPI events and either prints them to the screen or writes them to a JSON or CSV file so that you can analyze them with other tools. It works very much like `rrplogs` so [get familar with rrplogs](#rrp-logs-command) first.
 
 ```
-Usage: dapilogs <event type | networks>
+$ dapilogs --help
+
+Usage: dapilogs <event type | command>
 
 Commands:
   dapilogs                                  Search
@@ -297,7 +299,7 @@ Options:
       --help     Show help                                             [boolean]
 ```
 
-See event type-specific options by putting --help after the event type.
+The dAPI events are specified in the [IDapiServer](https://github.com/api3dao/airnode-protocol-v1/blob/main/contracts/dapis/interfaces/IDapiServer.sol) interface. See event type-specific options by putting --help after the event type.
 
 ```sh
 $ dapilogs requested --help      # Search for RequestedRrpBeaconUpdate events

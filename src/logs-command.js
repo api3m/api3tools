@@ -22,7 +22,7 @@ let args = null; // yargs argv
 function initialize(cType) {
     contractType = cType;
 
-    args = yargs.usage(`\nUsage: ${contractType}logs <event type | networks>`)
+    args = yargs.usage(`\nUsage: ${contractType}logs <event type | command>`)
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, ...", type: "string", default: "ethereum" })
         .option("f", { alias: "from", describe: "From block number or ISO8601 date", type: "string", default: "0" })
         .option("t", { alias: "to", describe: "To block number or ISO8601 date", type: "string", default: "latest" })
@@ -125,7 +125,7 @@ function finalizeArgs() {
 
     args = args.command("networks", "List all available networks")
         .command("dates", "Add date column to CSV file", { input: { alias: "i", describe: "Input file", type: "string", demandOption: true } })
-        .demandCommand(1, "Must provide a command: <event type | networks>")
+        .demandCommand(1, "Must provide a command: <event type | command>")
         .strict()
         .help(true).argv;
     assert(args, "Yargs argv is falsy");
