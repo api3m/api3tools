@@ -29,7 +29,7 @@ function initialize(cType) {
         .option("t", { alias: "to", describe: "To block number or ISO8601 date", type: "string", default: "latest" })
         .option("b", { alias: "by", describe: "Number of blocks per query", type: "number" })
         .option("w", { alias: "wait", describe: "Seconds to wait between queries", type: "number" })
-        .option("o", { alias: "output", describe: "Output file ending with .json or .csv", type: "string" });
+        .option("o", { alias: "output", describe: "json, csv, or file name ending with .json or .csv", type: "string" });
 }
 
 function addEvent(event) {
@@ -98,7 +98,11 @@ async function runCommand() {
         return;
     }
 
-    console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
+    if (["json", "csv"].includes(args.output)) {
+        args.output = `${args.network}-${args.eventType || args.command}-${args.from}-${args.to}.${args.output}`;
+    }
+
+    console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${args.eventType || args.command} events...`);
 
     let totalFound = 0;
     for (let queryFrom = args.from; queryFrom <= args.to; queryFrom += args.by) {
@@ -140,8 +144,11 @@ function finalizeArgs() {
         .help(true).argv;
     assert(args, "Yargs argv is falsy");
 
-    if (args.output && !(args.output.endsWith(".json") || args.output.endsWith(".csv"))) {
-        throw new Error("Output file name must end with .json or .csv");
+    if (["JSON", "CSV"].includes(args.output)) {
+        args.output = args.output.toLowerCase();
+    }
+    if (args.output && !(args.output.endsWith(".json") || args.output.endsWith(".csv") || ["json", "csv"].includes(args.output))) {
+        throw new Error("Output must be json, csv, or file name ending with .json or .csv");
     }
 
     args.networksPath = path.join(__dirname, "..", "networks");

@@ -180,11 +180,13 @@ $ rrplogs full --by 1000000 --wait 2  # Wait 2 seconds between queries
 
 ### Output File
 
-Specify the output file with --output (-o). By default events will be pretty-printed in the console as JSON but you can write them to a JSON or CSV file instead. The format is determined by the file extension.
+Specify the output file with --output (-o). By default, events will be pretty-printed in the console as JSON but you can write them to a JSON or CSV file instead. If just json or csv are given then a default file name will be used. If a file name ending in .json or .csv are given then the format is determined by the file extension.
 
 ```sh
-$ rrplogs full --output full-requests.json  # Store results in a JSON file
-$ rrplogs full --output full-requests.csv   # Store results in a CSV file
+$ rrplogs full --output json  # Store results as JSON in default file name
+$ rrplogs full --output csv   # Store results as CSV in default file name
+$ rrplogs full --output full-requests.json  # Store results as JSON in full-requests.json
+$ rrplogs full --output full-requests.csv   # Store results as CSV in full-requests.csv
 ```
 
 ### Adding Dates
@@ -205,8 +207,8 @@ $ rrplogs dates --network rinkeby --input full-requests.csv --output full-reques
 Extract all full requests and responses on Ethereum into CSV files.
 
 ```sh
-$ rrplogs full --output full-requests-eth.csv
-$ rrplogs fulfilled -o fulfilled-requests-eth.csv
+$ rrplogs full --output csv
+$ rrplogs fulfilled -o csv
 ```
 
 ##### Example: All Events
@@ -214,8 +216,8 @@ $ rrplogs fulfilled -o fulfilled-requests-eth.csv
 Extract all events on Ethereum into JSON and CSV files.
 
 ```sh
-$ rrplogs all --output events.json
-$ rrplogs all --output events.csv
+$ rrplogs all --output json
+$ rrplogs all --output csv
 ```
 
 ##### Example: Recent Full Requests
@@ -223,7 +225,7 @@ $ rrplogs all --output events.csv
 Extract full requests in the last 50000 blocks on Rinkeby into a JSON file.
 
 ```sh
-$ rrplogs full --network rinkeby --from -50000 -o full-requests-rinkeby.json
+$ rrplogs full --network rinkeby --from -50000 -o json
 ```
 
 #### Example: From Block To Block By
@@ -363,7 +365,7 @@ rsk: Rootstock (RSK) Mainnet
 Extract all events from the last 100000 blocks on Mumbai to CSV files.
 
 ```sh
-$ dapilogs all -n mumbai -f -100000 -b 1000 -o logs.csv
+$ dapilogs all -n mumbai -f -100000 -b 1000 -o csv
 ```
 
 #### dAPI Example: Update Signed On Date
@@ -371,6 +373,6 @@ $ dapilogs all -n mumbai -f -100000 -b 1000 -o logs.csv
 Extract UpdatedBeaconWithSignedData events from Mumbai on August 23rd (local time). In the first example we extract all of them. In the second example we filter to only get [Amberdata BTC/USD 5-min spot VWAP](https://market.api3.org/beacons/polygon/0x0dc124b07cc935112d87b49c806c5c880659dd7a2ef75b4ea04460cf224ea2c0) updates.
 
 ```sh
-$ dapilogs updatedsigned -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-all-signed-updates.csv # Get all signed updates
+$ dapilogs updatedsigned -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o csv # Get all signed updates
 $ dapilogs updatedsigned --beacon 0x0dc124b07cc935112d87b49c806c5c880659dd7a2ef75b4ea04460cf224ea2c0 -n mumbai -f 2022-08-23 -t 2022-08-24 -b 1000 -o mumbai-btc-usd-signed-updates.csv # Only get signed updates with the given beacon ID
 ```
