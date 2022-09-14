@@ -48,12 +48,12 @@ Commands:
 
 Options:
       --version  Show version number                                   [boolean]
-  -n, --network  Network: ethereum, polygon, ...  [string] [default: "ethereum"]
-  -f, --from     From block number or ISO8601 date       [string] [default: "0"]
-  -t, --to       To block number or ISO8601 date    [string] [default: "latest"]
+  -n, --network  Network: ethereum, polygon, ...           [default: "ethereum"]
+  -f, --from     From block number or ISO8601 date                [default: "0"]
+  -t, --to       To block number or ISO8601 date             [default: "latest"]
   -b, --by       Number of blocks per query                             [number]
   -w, --wait     Seconds to wait between queries                        [number]
-  -o, --output   Output file ending with .json or .csv                  [string]
+  -o, --output   json, csv, or file name ending with .json or .csv
       --help     Show help                                             [boolean]
 ```
 
@@ -314,12 +314,12 @@ Commands:
 
 Options:
       --version  Show version number                                   [boolean]
-  -n, --network  Network: ethereum, polygon, ...  [string] [default: "ethereum"]
-  -f, --from     From block number or ISO8601 date       [string] [default: "0"]
-  -t, --to       To block number or ISO8601 date    [string] [default: "latest"]
+  -n, --network  Network: ethereum, polygon, ...           [default: "ethereum"]
+  -f, --from     From block number or ISO8601 date                [default: "0"]
+  -t, --to       To block number or ISO8601 date             [default: "latest"]
   -b, --by       Number of blocks per query                             [number]
   -w, --wait     Seconds to wait between queries                        [number]
-  -o, --output   Output file ending with .json or .csv                  [string]
+  -o, --output   json, csv, or file name ending with .json or .csv
       --help     Show help                                             [boolean]
 ```
 

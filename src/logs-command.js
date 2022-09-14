@@ -24,12 +24,12 @@ function initialize(cType) {
     contractType = cType;
 
     args = yargs.usage(`\nUsage: ${contractType}logs <event type | command>`)
-        .option("n", { alias: "network", describe: "Network: ethereum, polygon, ...", type: "string", default: "ethereum" })
-        .option("f", { alias: "from", describe: "From block number or ISO8601 date", type: "string", default: "0" })
-        .option("t", { alias: "to", describe: "To block number or ISO8601 date", type: "string", default: "latest" })
+        .option("n", { alias: "network", describe: "Network: ethereum, polygon, ...", default: "ethereum" })
+        .option("f", { alias: "from", describe: "From block number or ISO8601 date", default: "0" })
+        .option("t", { alias: "to", describe: "To block number or ISO8601 date", default: "latest" })
         .option("b", { alias: "by", describe: "Number of blocks per query", type: "number" })
         .option("w", { alias: "wait", describe: "Seconds to wait between queries", type: "number" })
-        .option("o", { alias: "output", describe: "json, csv, or file name ending with .json or .csv", type: "string" });
+        .option("o", { alias: "output", describe: "json, csv, or file name ending with .json or .csv" });
 }
 
 function addEvent(event) {
@@ -39,9 +39,6 @@ function addEvent(event) {
     // Set option defaults
     for (const name in event.options) {
         const value = event.options[name];
-        if (value.type === undefined) {
-            value.type = "string"; // most options are strings
-        }
         if (value.default === undefined) {
             value.default = null; // default to null so ethers will ignore
         }
