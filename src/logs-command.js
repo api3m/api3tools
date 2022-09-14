@@ -96,7 +96,8 @@ async function runCommand() {
     }
 
     if (["json", "csv"].includes(args.output)) {
-        args.output = `${args.network}-${args.eventType || args.command}-${args.from}-${args.to}.${args.output}`;
+        const eventTypeSuffix = (args.command == "all") ? "" : "-" + args.eventType;
+        args.output = `${args.network}-${args.from}-${args.to}` + eventTypeSuffix + `.${args.output}`;
     }
 
     console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${args.eventType || args.command} events...`);
