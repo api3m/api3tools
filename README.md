@@ -148,7 +148,7 @@ The `contract` field is the Airnode RRP contract address on that chain. See [her
 Limit the range of blocks searched with --from (-f) and --to (-t). By default the whole chain will be searched, from block 0 to the latest block. If you're using public/free RPC, you'll often need to limit the block range or your query will respond with an error.
 
 ```sh
-$ rrplogs full --from 14698560 -to 14698562 # Search from block 14698560 to block 14698562
+$ rrplogs full --from 14698560 --to 14698562 # Search from block 14698560 to block 14698562
 ```
 
 If --to is negative then it will be treated as an offset from the current block number. If --from is negative then it will be treated as an offset from --to.

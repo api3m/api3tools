@@ -25,11 +25,11 @@ function initialize(cType) {
 
     args = yargs.usage(`\nUsage: ${contractType}logs <event type | command>`)
         .option("n", { alias: "network", describe: "Network: ethereum, polygon, ...", default: "ethereum" })
-        .option("f", { alias: "from", describe: "From block number or ISO8601 date", default: "0" })
+        .option("f", { alias: "from", describe: "From block number or ISO8601 date", default: 0 })
         .option("t", { alias: "to", describe: "To block number or ISO8601 date", default: "latest" })
         .option("b", { alias: "by", describe: "Number of blocks per query", type: "number" })
         .option("w", { alias: "wait", describe: "Seconds to wait between queries", type: "number" })
-        .option("o", { alias: "output", describe: "json, csv, or file name ending with .json or .csv" });
+        .option("o", { alias: "output", describe: "json, csv, or file name ending with .json or .csv", type: "string" });
 }
 
 function addEvent(event) {
