@@ -238,8 +238,14 @@ function defaultEventMapping(x) {
 }
 
 function mapEvent(event, eventArgsMap) {
-    const mapped = eventArgsMap(event.args);
-    mapped.type = event.event;
+    let mapped = null;
+    if (event.args) {
+        mapped = eventArgsMap(event.args);
+        mapped.type = event.event;
+    } else {
+        mapped = Object.assign({}, event.topics);
+        mapped.type = "Unknown";
+    }
     mapped.network = args.network;
     mapped.blockNumber = event.blockNumber;
     mapped.transaction = event.transactionHash;
