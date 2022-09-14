@@ -42,6 +42,7 @@ Commands:
   rrplogs FulfilledRequest      Search                      [aliases: fulfilled]
   rrplogs FailedRequest         Search                         [aliases: failed]
   rrplogs SetSponsorshipStatus  Search                        [aliases: sponsor]
+  rrplogs all                   Search for all event types
   rrplogs networks              List all available networks
   rrplogs dates                 Add date column to CSV file
 
@@ -60,7 +61,7 @@ See [this guide](https://consensys.net/blog/developers/guide-to-events-and-logs-
 
 ### Event Types
 
-The Airnode RRP event type to search for must be given. Either the full event type name or a shorter alias can be given. The examples below use aliases for brevity.
+The main parameter is the Airnode RRP event type to search for. Either the full event type name or a shorter alias can be given. The examples below use aliases for brevity.
 
 See event type-specific options by putting --help after the event type.
 
@@ -70,6 +71,12 @@ $ rrplogs template --help  # Search for MadeTemplateRequest events
 $ rrplogs fulfilled --help # Search for FulfilledRequest events
 $ rrplogs failed --help    # Search for FailedRequest events
 $ rrplogs sponsor --help   # Search for SetSponsorshipStatus events
+```
+
+Search for all event types with the `all` command. If the [output file](#output-file) is JSON they will all go in the same file. If the output file is CSV then a separate file will be created for each event type.
+
+```sh
+$ rrplogs all
 ```
 
 ### Network
@@ -202,6 +209,15 @@ $ rrplogs full --output full-requests-eth.csv
 $ rrplogs fulfilled -o fulfilled-requests-eth.csv
 ```
 
+##### Example: All Events
+
+Extract all events on Ethereum into JSON and CSV files.
+
+```sh
+$ rrplogs all --output events.json
+$ rrplogs all --output events.csv
+```
+
 ##### Example: Recent Full Requests
 
 Extract full requests in the last 50000 blocks on Rinkeby into a JSON file.
@@ -285,6 +301,7 @@ Commands:
   dapilogs UpdatedBeaconSetWithSignedData   Search   [aliases: updatedsetsigned]
   dapilogs AddedUnlimitedReader             Search          [aliases: unlimited]
   dapilogs SetDapiName                      Search           [aliases: namedapi]
+  dapilogs all                              Search for all event types
   dapilogs networks                         List all available networks
   dapilogs dates                            Add date column to CSV file
 
