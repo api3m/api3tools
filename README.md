@@ -358,6 +358,16 @@ rsk: Rootstock (RSK) Mainnet
 
 ### dAPI Logs Examples
 
+#### dAPI Example: Recent To CSV
+
+Extract all events from the last 100000 blocks on Mumbai to CSV files.
+
+```sh
+$ dapilogs all -n mumbai -f -100000 -b 1000 -o logs.csv
+```
+
+#### dAPI Example: Update Signed On Date
+
 Extract UpdatedBeaconWithSignedData events from Mumbai on August 23rd (local time). In the first example we extract all of them. In the second example we filter to only get [Amberdata BTC/USD 5-min spot VWAP](https://market.api3.org/beacons/polygon/0x0dc124b07cc935112d87b49c806c5c880659dd7a2ef75b4ea04460cf224ea2c0) updates.
 
 ```sh
