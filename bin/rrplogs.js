@@ -15,14 +15,7 @@ logs.addEvent({
     alias: "full",
     options: airnodeRequestOptions,
     abi: "event MadeFullRequest(address indexed airnode, bytes32 indexed requestId, uint256 requesterRequestCount, uint256 chainId, address requester, bytes32 endpointId, address sponsor, address sponsorWallet, address fulfillAddress, bytes4 fulfillFunctionId, bytes parameters)",
-    filter: (args, f) => f.MadeFullRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
-    map: x => ({
-        airnode: x.airnode,
-        requestId: x.requestId,
-        requester: x.requester,
-        endpointId: x.endpointId,
-        sponsor: x.sponsor
-    })
+    filter: (args, f) => f.MadeFullRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null)
 });
 
 logs.addEvent({
@@ -30,14 +23,7 @@ logs.addEvent({
     alias: "template",
     options: airnodeRequestOptions,
     abi: "event MadeTemplateRequest(address indexed airnode, bytes32 indexed requestId, uint256 requesterRequestCount, uint256 chainId, address requester, bytes32 templateId, address sponsor, address sponsorWallet, address fulfillAddress, bytes4 fulfillFunctionId, bytes parameters)",
-    filter: (args, f) => f.MadeTemplateRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null),
-    map: x => ({
-        airnode: x.airnode,
-        requestId: x.requestId,
-        requester: x.requester,
-        templateId: x.templateId,
-        sponsor: x.sponsor
-    })
+    filter: (args, f) => f.MadeTemplateRequest(args.airnode, args.request, null, null, null, null, null, null, null, null, null)
 });
 
 logs.addEvent({
@@ -45,12 +31,7 @@ logs.addEvent({
     alias: "fulfilled",
     options: airnodeRequestOptions,
     abi: "event FulfilledRequest(address indexed airnode, bytes32 indexed requestId, bytes data)",
-    filter: (args, f) => f.FulfilledRequest(args.airnode, args.request, null),
-    map: x => ({
-        airnode: x.airnode,
-        requestId: x.requestId,
-        data: x.data
-    })
+    filter: (args, f) => f.FulfilledRequest(args.airnode, args.request, null)
 });
 
 logs.addEvent({
@@ -58,12 +39,7 @@ logs.addEvent({
     alias: "failed",
     options: airnodeRequestOptions,
     abi: "event FailedRequest(address indexed airnode, bytes32 indexed requestId, string errorMessage)",
-    filter: (args, f) => f.FailedRequest(args.airnode, args.request, null),
-    map: x => ({
-        airnode: x.airnode,
-        requestId: x.requestId,
-        errorMessage: x.errorMessage
-    })
+    filter: (args, f) => f.FailedRequest(args.airnode, args.request, null)
 });
 
 logs.addEvent({
@@ -74,11 +50,7 @@ logs.addEvent({
         requester: { describe: "Filter to requester address" }
     },
     abi: "event SetSponsorshipStatus(address indexed sponsor, address indexed requester, bool sponsorshipStatus)",
-    filter: (args, f) => f.SetSponsorshipStatus(args.sponsor, args.requester, null),
-    map: x => ({
-        sponsor: x.sponsor,
-        requester: x.requester
-    })
+    filter: (args, f) => f.SetSponsorshipStatus(args.sponsor, args.requester, null)
 });
 
 logs.runCommand();

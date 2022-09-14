@@ -88,7 +88,7 @@ async function runCommand() {
         mapping = defaultEventMapping;
     } else {
         filter = eventDefinitons[args.eventType].createFilter(args, contract.filters);
-        mapping = eventDefinitons[args.eventType].map;
+        mapping = eventDefinitons[args.eventType].map || defaultEventMapping;
     }
 
     try {
