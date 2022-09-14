@@ -121,4 +121,52 @@ logs.addEvent({
     filter: (args, f) => f.SetDapiName(args.name, null, args.sender)
 });
 
+logs.addEvent({
+    type: "ExtendedWhitelistExpiration",
+    alias: "extwlexp",
+    options: {
+        service: { describe: "Filter to service ID" },
+        user: { describe: "Filter to user address" },
+        sender: { describe: "Filter to sender address" }
+    },
+    abi: "event ExtendedWhitelistExpiration(bytes32 indexed serviceId, address indexed user, address indexed sender, uint256 expiration)",
+    filter: (args, f) => f.ExtendedWhitelistExpiration(args.service, args.user, args.sender, null)
+});
+
+logs.addEvent({
+    type: "SetWhitelistExpiration",
+    alias: "setwlexp",
+    options: {
+        service: { describe: "Filter to service ID" },
+        user: { describe: "Filter to user address" },
+        sender: { describe: "Filter to sender address" }
+    },
+    abi: "event SetWhitelistExpiration(bytes32 indexed serviceId, address indexed user, address indexed sender, uint256 expiration)",
+    filter: (args, f) => f.SetWhitelistExpiration(args.service, args.user, args.sender, null)
+});
+
+logs.addEvent({
+    type: "SetIndefiniteWhitelistStatus",
+    alias: "setindwlstat",
+    options: {
+        service: { describe: "Filter to service ID" },
+        user: { describe: "Filter to user address" },
+        sender: { describe: "Filter to sender address" }
+    },
+    abi: "event SetIndefiniteWhitelistStatus(bytes32 indexed serviceId, address indexed user, address indexed sender, bool status, uint192 indefiniteWhitelistCount)",
+    filter: (args, f) => f.SetIndefiniteWhitelistStatus(args.service, args.user, args.sender, null, null)
+});
+
+logs.addEvent({
+    type: "RevokedIndefiniteWhitelistStatus",
+    alias: "revindwlstat",
+    options: {
+        service: { describe: "Filter to service ID" },
+        user: { describe: "Filter to user address" },
+        setter: { describe: "Filter to setter address" }
+    },
+    abi: "event RevokedIndefiniteWhitelistStatus(bytes32 indexed serviceId, address indexed user, address indexed setter, address sender, uint192 indefiniteWhitelistCount)",
+    filter: (args, f) => f.RevokedIndefiniteWhitelistStatus(args.service, args.user, args.setter, null, null)
+});
+
 logs.runCommand();

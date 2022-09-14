@@ -301,6 +301,11 @@ Commands:
   dapilogs UpdatedBeaconSetWithSignedData   Search   [aliases: updatedsetsigned]
   dapilogs AddedUnlimitedReader             Search          [aliases: unlimited]
   dapilogs SetDapiName                      Search           [aliases: namedapi]
+  dapilogs ExtendedWhitelistExpiration      Search           [aliases: extwlexp]
+  dapilogs SetWhitelistExpiration           Search           [aliases: setwlexp]
+  dapilogs SetIndefiniteWhitelistStatus     Search       [aliases: setindwlstat]
+  dapilogs                                  Search
+  RevokedIndefiniteWhitelistStatus                       [aliases: revindwlstat]
   dapilogs all                              Search for all event types
   dapilogs networks                         List all available networks
   dapilogs dates                            Add date column to CSV file
@@ -316,7 +321,7 @@ Options:
       --help     Show help                                             [boolean]
 ```
 
-The dAPI events are specified in the [IDapiServer](https://github.com/api3dao/airnode-protocol-v1/blob/main/contracts/dapis/interfaces/IDapiServer.sol) interface. See event type-specific options by putting --help after the event type.
+The dAPI events are specified in the [IDapiServer](https://github.com/api3dao/airnode-protocol-v1/blob/main/contracts/dapis/interfaces/IDapiServer.sol) and [IWhitelistWithManager](https://github.com/api3dao/airnode-protocol-v1/blob/main/contracts/whitelist/interfaces/IWhitelistWithManager.sol) interfaces. See event type-specific options by putting --help after the event type.
 
 ```sh
 $ dapilogs requested --help      # Search for RequestedRrpBeaconUpdate events
