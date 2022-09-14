@@ -42,6 +42,8 @@ Commands:
   rrplogs FulfilledRequest      Search                      [aliases: fulfilled]
   rrplogs FailedRequest         Search                         [aliases: failed]
   rrplogs SetSponsorshipStatus  Search                        [aliases: sponsor]
+  rrplogs RequestedWithdrawal   Search                       [aliases: withdraw]
+  rrplogs FulfilledWithdrawal   Search                       [aliases: withdrew]
   rrplogs all                   Search for all event types
   rrplogs networks              List all available networks
   rrplogs dates                 Add date column to CSV file

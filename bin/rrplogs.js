@@ -53,4 +53,28 @@ logs.addEvent({
     filter: (args, f) => f.SetSponsorshipStatus(args.sponsor, args.requester, null)
 });
 
+logs.addEvent({
+    type: "RequestedWithdrawal",
+    alias: "withdraw",
+    options: {
+        airnode: { describe: "Filter to Airnode ID" },
+        sponsor: { describe: "Filter to sponsor address" },
+        request: { describe: "Filter to withdrawal request ID" },
+    },
+    abi: "event RequestedWithdrawal(address indexed airnode, address indexed sponsor, bytes32 indexed withdrawalRequestId, address sponsorWallet)",
+    filter: (args, f) => f.RequestedWithdrawal(args.airnode, args.sponsor, args.request, null)
+});
+
+logs.addEvent({
+    type: "FulfilledWithdrawal",
+    alias: "withdrew",
+    options: {
+        airnode: { describe: "Filter to Airnode ID" },
+        sponsor: { describe: "Filter to sponsor address" },
+        request: { describe: "Filter to withdrawal request ID" },
+    },
+    abi: "event FulfilledWithdrawal(address indexed airnode, address indexed sponsor, bytes32 indexed withdrawalRequestId, address sponsorWallet, uint256 amount)",
+    filter: (args, f) => f.FulfilledWithdrawal(args.airnode, args.sponsor, args.request, null, null)
+});
+
 logs.runCommand();
