@@ -16,6 +16,7 @@ module.exports = {
 
 const eventAliases = {};
 const eventDefinitons = {};
+const filesWritten = {};
 let contractType = null; // rrp or dapi
 let args = null; // yargs argv
 
@@ -77,9 +78,18 @@ async function runCommand() {
         return;
     }
 
-    const definition = eventDefinitons[args.eventType];
-    const contract = new ethers.Contract(network.contracts[contractType], [definition.abi], provider);
-    const filter = definition.createFilter(args, contract.filters);
+    const abi = Object.values(eventDefinitons).map(x => x.abi);
+    const contract = new ethers.Contract(network.contracts[contractType], abi, provider);
+
+    let filter = null;
+    let mapping = null;
+    if (args.command == "all") {
+        filter = "*";
+        mapping = defaultEventMapping;
+    } else {
+        filter = eventDefinitons[args.eventType].createFilter(args, contract.filters);
+        mapping = eventDefinitons[args.eventType].map;
+    }
 
     try {
         await prepareForBlockRangeLoop(provider);
@@ -90,7 +100,6 @@ async function runCommand() {
 
     console.log(`Searching ${network.name} blocks ${args.from} to ${args.to} for ${args.eventType} events...`);
 
-    let appendFile = false;
     let totalFound = 0;
     for (let queryFrom = args.from; queryFrom <= args.to; queryFrom += args.by) {
         let queryTo = Math.min(queryFrom + args.by - 1, args.to);
@@ -105,8 +114,7 @@ async function runCommand() {
             console.log(`found ${events.length} events`);
             totalFound += events.length;
             if (events.length > 0) {
-                await writeOutput(events.map(x => mapEvent(x, definition.map)), appendFile);
-                appendFile = true;
+                await writeOutput(events.map(x => mapEvent(x, mapping)));
             }
         } catch (error) {
             handleEthersError(error);
@@ -115,15 +123,17 @@ async function runCommand() {
     }
     closeOutput(totalFound);
 
-    const fileMessage = (totalFound > 0 && args.output) ? `, stored in ${args.output}` : "";
-    console.log(`Found ${totalFound} ${args.eventType} events` + fileMessage);
+    const eventsMessage = args.eventType ? args.eventType + " " : "";
+    const filesMessage = (totalFound > 0 && args.output) ? `, stored in ${Object.keys(filesWritten).join(", ")}` : "";
+    console.log(`Found ${totalFound} ${eventsMessage}events` + filesMessage);
 }
 
 function finalizeArgs() {
     assert(contractType, "Must provide contract type");
     assert(Object.keys(eventDefinitons).length > 0, "Must provide event definitions");
 
-    args = args.command("networks", "List all available networks")
+    args = args.command("all", "Search for all event types")
+        .command("networks", "List all available networks")
         .command("dates", "Add date column to CSV file", { input: { alias: "i", describe: "Input file", type: "string", demandOption: true } })
         .demandCommand(1, "Must provide a command: <event type | command>")
         .strict()
@@ -213,33 +223,57 @@ async function getBlockByNumberOrDate(which, given, provider) {
     }
 }
 
+function defaultEventMapping(x) {
+    const y = {};
+    for (key of Object.keys(x)) {
+        if (!/^\d+$/.test(key)) { // Only non-integer keys
+            if (ethers.BigNumber.isBigNumber(x[key])) {
+                y[key] = x[key].toString();
+            } else {
+                y[key] = x[key];
+            }
+        }
+    }
+    return y;
+}
+
 function mapEvent(event, eventArgsMap) {
     const mapped = eventArgsMap(event.args);
+    mapped.type = event.event;
     mapped.network = args.network;
     mapped.blockNumber = event.blockNumber;
     mapped.transaction = event.transactionHash;
     return mapped;
 }
 
-async function writeOutput(events, append) {
+async function writeOutput(events) {
     if (args.output) {
         if (args.output.endsWith(".json")) {
-            writeJsonOutput(events, append);
+            writeJsonOutput(events);
         } else if (args.output.endsWith(".csv")) {
-            await new csv(events).toDisk(args.output, { append });
+            await writeCsvOutput(events);
         }
     } else {
         console.log(events);
     }
 }
 
-function writeJsonOutput(events, append) {
+async function writeCsvOutput(events) {
+    for (const event of events) {
+        const filename = (args.command == "all") ? args.output.slice(0, -4) + "-" + event.type + ".csv" : args.output;
+        await new csv([event]).toDisk(filename, { append: Boolean(filesWritten[filename]) });
+        filesWritten[filename] = true;
+    }
+}
+
+function writeJsonOutput(events) {
     const s = JSON.stringify(events).slice(1, -1); // remove the array brackets
-    if (append) {
+    if (filesWritten[args.output]) {
         fs.appendFileSync(args.output, "," + s);
     } else {
         fs.writeFileSync(args.output, "[" + s);
     }
+    filesWritten[args.output] = true;
 }
 
 function closeOutput(totalFound) {
